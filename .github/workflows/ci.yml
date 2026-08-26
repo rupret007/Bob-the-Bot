@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, 'codex/**']
+
+permissions:
+  contents: read
+
+jobs:
+  bob-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CI: true
+      ASSISTANT_NAME: Bob
+      TELEGRAM_NATURAL_UX: true
+      OPENAI_API_ENABLED: 0
+      RUN_COMM_SMOKE: 0
+    steps:
+      - name: Check out Bob contract
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up pinned Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install contract dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Verify contract, tests, and privacy boundary
+        run: npm run check
+
+      - name: Check out pinned Andrea engine
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: rupret007/Andrea_NanoBot
+          ref: f8655e2da59d1db8bd3777758ae8220ecb65d847
+          path: .engine/Andrea_NanoBot
+          persist-credentials: false
+
+      - name: Apply and verify the exact Bob overlay
+        run: npm run verify:engine
+
+      - name: Install pinned engine dependencies
+        run: npm ci --prefix .engine/Andrea_NanoBot
+
+      - name: Typecheck the patched engine
+        run: npm --prefix .engine/Andrea_NanoBot run typecheck
+
+      - name: Run offline identity, delegation, and send-fence acceptance
+        run: >-
+          npm --prefix .engine/Andrea_NanoBot run test --
+          src/direct-quick-reply.test.ts
+          src/assistant-routing.test.ts
+          src/channels/telegram.test.ts
+          src/channels/bluebubbles.test.ts
+          src/container-runner-controls.test.ts
+          src/send-authorization-fence.test.ts
+          src/openclaw-andrea-bridge.test.ts

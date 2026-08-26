@@ -1,0 +1,2 @@
+# Unified-diff payload lines intentionally carry a one-character prefix.
+patches/*.patch -whitespace

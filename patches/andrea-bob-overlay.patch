@@ -1,0 +1,931 @@
+diff --git a/groups/global/CLAUDE.md b/groups/global/CLAUDE.md
+index 99bab4c..2e193dc 100644
+--- a/groups/global/CLAUDE.md
++++ b/groups/global/CLAUDE.md
+@@ -1,8 +1,8 @@
+-# Andrea
++# Bob
+ 
+-You are Andrea, a personal assistant. You help with tasks, answer questions, and can schedule reminders.
++You are Bob, Jeff's front-door assistant (Telegram display name: Bot the Bot). You help with tasks, answer questions, and can schedule reminders. Talk short, direct, and natural — like a person, not a menu. Same identity as the desktop Grok Bot chat named Bob.
+ 
+-Andrea is the only public assistant identity. Any helper layers, OpenClaw capabilities, or internal orchestration are private implementation details and should not be presented as separate public bots.
++Bob is the only public assistant identity. Andrea is the Messages/engine under the hood, not a second personality. Any helper layers, OpenClaw capabilities, or internal orchestration are private implementation details and should not be presented as separate public bots.
+ 
+ ## What You Can Do
+ 
+@@ -19,16 +19,16 @@ Andrea is the only public assistant identity. Any helper layers, OpenClaw capabi
+ 
+ If the user wants to buy something:
+ 
+-- Andrea may search for products and prepare a purchase request
+-- Andrea must not claim a purchase already happened unless the approval flow actually succeeded
+-- Andrea must not finalize a purchase without the explicit approval code for that request
++- Bob may search for products and prepare a purchase request
++- Bob must not claim a purchase already happened unless the approval flow actually succeeded
++- Bob must not finalize a purchase without the explicit approval code for that request
+ - keep internal helper mechanics private and keep the public reply outcome-focused
+ 
+ ## Communication
+ 
+ Your output is sent to the user or group.
+ 
+-You also have `mcp__nanoclaw__send_message` which sends a message immediately while you're still working. It still appears as Andrea in the public chat. Use it sparingly for meaningful progress updates on longer-running helper or coding work.
++You also have `mcp__nanoclaw__send_message` which sends a message immediately while you're still working. It still appears as Bob (Bot the Bot) in the public chat. Use it sparingly for meaningful progress updates on longer-running helper or coding work.
+ 
+ ### Internal thoughts
+ 
+diff --git a/groups/main/CLAUDE.md b/groups/main/CLAUDE.md
+index 8da10d1..9402c53 100644
+--- a/groups/main/CLAUDE.md
++++ b/groups/main/CLAUDE.md
+@@ -1,8 +1,8 @@
+-# Andrea
++# Bob
+ 
+-You are Andrea, a personal assistant. You help with tasks, answer questions, and can schedule reminders.
++You are Bob, Jeff's front-door assistant (Telegram display name: Bot the Bot). You help with tasks, answer questions, and can schedule reminders. Talk short, direct, and natural — like a person, not a menu. Same identity as the desktop Grok Bot chat named Bob.
+ 
+-Andrea is the only public assistant identity. Any helper layers, OpenClaw capabilities, or internal orchestration are private implementation details and should not be presented as separate public bots.
++Bob is the only public assistant identity. Andrea is the Messages/engine under the hood, not a second personality. Any helper layers, OpenClaw capabilities, or internal orchestration are private implementation details and should not be presented as separate public bots.
+ 
+ ## What You Can Do
+ 
+@@ -19,16 +19,16 @@ Andrea is the only public assistant identity. Any helper layers, OpenClaw capabi
+ 
+ If the user wants to buy something:
+ 
+-- Andrea may search for products and prepare a purchase request
+-- Andrea must not claim a purchase already happened unless the approval flow actually succeeded
+-- Andrea must not finalize a purchase without the explicit approval code for that request
++- Bob may search for products and prepare a purchase request
++- Bob must not claim a purchase already happened unless the approval flow actually succeeded
++- Bob must not finalize a purchase without the explicit approval code for that request
+ - keep internal helper mechanics private and keep the public reply outcome-focused
+ 
+ ## Communication
+ 
+ Your output is sent to the user or group.
+ 
+-You also have `mcp__nanoclaw__send_message` which sends a message immediately while you're still working. It still appears as Andrea in the public chat. Use it sparingly for meaningful progress updates on longer-running helper or coding work.
++You also have `mcp__nanoclaw__send_message` which sends a message immediately while you're still working. It still appears as Bob (Bot the Bot) in the public chat. Use it sparingly for meaningful progress updates on longer-running helper or coding work.
+ 
+ ### Internal thoughts
+ 
+@@ -160,7 +160,7 @@ Groups are registered in the SQLite `registered_groups` table:
+   "1234567890-1234567890@g.us": {
+     "name": "Family Chat",
+     "folder": "whatsapp_family-chat",
+-    "trigger": "@Andrea",
++    "trigger": "@Bob",
+     "added_at": "2024-01-31T12:00:00.000Z"
+   }
+ }
+@@ -205,7 +205,7 @@ Groups can have extra directories mounted. Add `containerConfig` to their entry:
+   "1234567890@g.us": {
+     "name": "Dev Team",
+     "folder": "dev-team",
+-    "trigger": "@Andrea",
++    "trigger": "@Bob",
+     "added_at": "2026-01-31T12:00:00Z",
+     "containerConfig": {
+       "additionalMounts": [
+diff --git a/src/assistant-personalization.ts b/src/assistant-personalization.ts
+index 0ffcbdb..717fe77 100644
+--- a/src/assistant-personalization.ts
++++ b/src/assistant-personalization.ts
+@@ -212,7 +212,7 @@ function describeFact(fact: ProfileFactWithSubject): string {
+     return 'you prefer short, direct answers';
+   }
+   if (fact.factKey === PERSONALIZATION_LEVEL_FACT_KEY) {
+-    return 'you want Andrea to be less personal by default';
++    return 'you want Bob to be less personal by default';
+   }
+   if (fact.factKey === FAMILY_CONTEXT_FACT_KEY) {
+     const enabled = value.enabled !== false;
+@@ -241,7 +241,7 @@ function describeFact(fact: ProfileFactWithSubject): string {
+   if (fact.factKey === COMPANION_TONE_FACT_KEY) {
+     const mode = typeof value.mode === 'string' ? value.mode : 'balanced';
+     return mode === 'plain'
+-      ? 'you want Andrea to keep the tone plain and low-flourish'
++      ? 'you want Bob to keep the tone plain and low-flourish'
+       : mode === 'warmer'
+         ? 'you are okay with a little extra warmth when it fits'
+         : 'you prefer a balanced tone';
+@@ -787,7 +787,7 @@ export function handlePersonalizationCommand(
+       value: { mode: 'main_thing_first' },
+       state: 'accepted',
+       sourceChannel: input.channel,
+-      sourceSummary: 'User asked Andrea to lead with the main thing first.',
++      sourceSummary: 'User asked Bob to lead with the main thing first.',
+       now,
+     });
+     return {
+@@ -811,7 +811,7 @@ export function handlePersonalizationCommand(
+       value: { mode: 'warmer' },
+       state: 'accepted',
+       sourceChannel: input.channel,
+-      sourceSummary: 'User asked Andrea to sound a little warmer.',
++      sourceSummary: 'User asked Bob to sound a little warmer.',
+       now,
+     });
+     return {
+@@ -835,7 +835,7 @@ export function handlePersonalizationCommand(
+       value: { mode: 'plain' },
+       state: 'accepted',
+       sourceChannel: input.channel,
+-      sourceSummary: 'User asked Andrea to keep the tone plain.',
++      sourceSummary: 'User asked Bob to keep the tone plain.',
+       now,
+     });
+     return {
+@@ -859,7 +859,7 @@ export function handlePersonalizationCommand(
+       value: { mode: 'balanced' },
+       state: 'accepted',
+       sourceChannel: input.channel,
+-      sourceSummary: 'User asked Andrea to return to a balanced tone.',
++      sourceSummary: 'User asked Bob to return to a balanced tone.',
+       now,
+     });
+     return {
+@@ -996,7 +996,7 @@ export function handlePersonalizationCommand(
+       state: 'accepted',
+       sourceChannel: input.channel,
+       sourceSummary:
+-        'User asked Andrea to prefer deeper reasoning next time when uncertainty is present.',
++        'User asked Bob to prefer deeper reasoning next time when uncertainty is present.',
+       now,
+     });
+     return {
+diff --git a/src/assistant-routing.ts b/src/assistant-routing.ts
+index d816d60..6200e56 100644
+--- a/src/assistant-routing.ts
++++ b/src/assistant-routing.ts
+@@ -428,7 +428,7 @@ function buildGuidance(route: AssistantRequestRoute, reason: string): string {
+         'Every handled user turn must end with a user-facing reply. Never finish with an empty final response.',
+       ]
+     : [
+-        'Andrea is the only public assistant identity in this chat unless the user explicitly addresses @openclaw.',
++        'Bob is the only public assistant identity in this chat (Telegram display: Bot the Bot). Andrea is the messaging engine under the hood. Do not present helper layers as separate bots unless the user explicitly addresses @openclaw.',
+         'OpenClaw, helper tools, and internal orchestration are implementation details on non-@openclaw turns. Never present them as a second public bot or public persona unless the user explicitly addresses @openclaw.',
+         'Do not leak internal routes, helper chatter, hidden planning, or tool plumbing in user-facing replies.',
+         'Andrea should remain the final response formatter even when internal helper capability is used.',
+diff --git a/src/channels/bluebubbles.ts b/src/channels/bluebubbles.ts
+index 840f62b..92515e2 100644
+--- a/src/channels/bluebubbles.ts
++++ b/src/channels/bluebubbles.ts
+@@ -537,7 +537,23 @@ function extractBlueBubblesServiceFromChatGuid(
+   const normalized = chatGuid?.trim();
+   if (!normalized) return null;
+   const [service] = normalized.split(';', 1);
+-  return service?.trim() || null;
++  const trimmed = service?.trim() || null;
++  // BlueBubbles wildcard "any" is not a valid Messages AppleScript service type
++  // (error -1700: Can't make any into type constant). Prefer iMessage.
++  if (!trimmed || trimmed.toLowerCase() === 'any') return 'iMessage';
++  return trimmed;
++}
++
++function coerceBlueBubblesAppleScriptChatGuid(
++  chatGuid: string | null | undefined,
++): string | null {
++  const normalized = chatGuid?.trim();
++  if (!normalized) return null;
++  // Avoid BB AppleScript fallback: service type = any (-1700)
++  if (/^any;/i.test(normalized)) {
++    return `iMessage;${normalized.slice(normalized.indexOf(';') + 1)}`;
++  }
++  return normalized;
+ }
+ 
+ function inferBlueBubblesGroupChat(
+@@ -4850,7 +4866,10 @@ export class BlueBubblesChannel implements Channel {
+       );
+     }
+     const request = {
+-      chatGuid,
++      chatGuid:
++        this.sendMethod === 'apple-script'
++          ? coerceBlueBubblesAppleScriptChatGuid(chatGuid) || chatGuid
++          : chatGuid,
+       text,
+       replyToGuid,
+       sendMethod: this.sendMethod,
+@@ -4927,7 +4946,11 @@ export class BlueBubblesChannel implements Channel {
+       ? options.replyToMessageId.slice(3)
+       : undefined;
+     const form = new FormData();
+-    form.set('chatGuid', chatGuid);
++    const attachmentChatGuid =
++      this.sendMethod === 'apple-script'
++        ? coerceBlueBubblesAppleScriptChatGuid(chatGuid) || chatGuid
++        : chatGuid;
++    form.set('chatGuid', attachmentChatGuid);
+     form.set('tempGuid', options?.idempotencyKey?.trim() || randomUUID());
+     form.set('method', resolveBlueBubblesSendMethod(this.sendMethod));
+     if (replyToGuid) {
+diff --git a/src/channels/telegram.test.ts b/src/channels/telegram.test.ts
+index 4cba6a2..d844448 100644
+--- a/src/channels/telegram.test.ts
++++ b/src/channels/telegram.test.ts
+@@ -1,3 +1,4 @@
++import { TELEGRAM_NATURAL_UX } from '../config.js';
+ import fs from 'fs';
+ import os from 'os';
+ import path from 'path';
+@@ -257,6 +258,14 @@ describe('buildTelegramHelpText', () => {
+   it('keeps help short and focused on how to use Telegram well', () => {
+     const help = buildTelegramHelpText('Andrea');
+ 
++    if (TELEGRAM_NATURAL_UX) {
++      expect(help).toContain("I'm Bob");
++      expect(help).toContain('no menus needed');
++      expect(help).toContain('send it');
++      expect(help).not.toContain('/registermain');
++      expect(help).not.toContain('/commands');
++      return;
++    }
+     expect(help).toContain('*How Andrea Works Here*');
+     expect(help).toContain('/registermain');
+     expect(help).toContain('/commands');
+@@ -307,6 +316,13 @@ describe('buildTelegramWelcomeText', () => {
+   it('shows quick-start instructions for new users', () => {
+     const welcome = buildTelegramWelcomeText('Andrea');
+ 
++    if (TELEGRAM_NATURAL_UX) {
++      expect(welcome).toContain("I'm Bob");
++      expect(welcome).toContain('Skip the command list');
++      expect(welcome).toContain('send it');
++      expect(welcome).not.toContain('/registermain');
++      return;
++    }
+     expect(welcome).toContain('*Welcome to Andrea*');
+     expect(welcome).toContain('/registermain');
+     expect(welcome).toContain('Just send a normal message');
+@@ -323,6 +339,13 @@ describe('buildTelegramCommandsText', () => {
+   it('groups the public command list around setup and status instead of a flat dump', () => {
+     const commands = buildTelegramCommandsText();
+ 
++    if (TELEGRAM_NATURAL_UX) {
++      expect(commands).toContain("don't need commands");
++      expect(commands).toContain('/ping');
++      expect(commands).not.toContain('/cursor_status');
++      expect(commands).not.toContain('/bluebubbles');
++      return;
++    }
+     expect(commands).toContain('*Telegram Commands*');
+     expect(commands).toContain('*Start Here*');
+     expect(commands).toContain('*Useful Checks*');
+@@ -461,6 +484,13 @@ describe('buildTelegramFeaturesText', () => {
+   it('keeps the feature list focused on the stable demo surface', () => {
+     const features = buildTelegramFeaturesText('Andrea');
+ 
++    if (TELEGRAM_NATURAL_UX) {
++      expect(features).toContain("I'm Bob");
++      expect(features).toContain('sends need your yes');
++      expect(features).toContain('No feature menu');
++      expect(features).not.toContain('/cursor-results');
++      return;
++    }
+     expect(features).toContain('*Best Here*');
+     expect(features).toContain('Calendar');
+     expect(features).toContain('does not auto-reply to contacts');
+@@ -648,6 +678,7 @@ describe('TelegramChannel polling hardening', () => {
+     const setMyDescription = vi.fn().mockResolvedValue(undefined);
+     const setMyShortDescription = vi.fn().mockResolvedValue(undefined);
+     const setMyCommands = vi.fn().mockResolvedValue(undefined);
++    const deleteMyCommands = vi.fn().mockResolvedValue(undefined);
+     const channel = new TelegramChannel('test-token', {
+       onMessage: () => undefined,
+       onChatMetadata: () => undefined,
+@@ -661,6 +692,7 @@ describe('TelegramChannel polling hardening', () => {
+             setMyDescription: typeof setMyDescription;
+             setMyShortDescription: typeof setMyShortDescription;
+             setMyCommands: typeof setMyCommands;
++            deleteMyCommands: typeof deleteMyCommands;
+           };
+         };
+         configureBotMetadataOnce: () => Promise<void>;
+@@ -670,6 +702,7 @@ describe('TelegramChannel polling hardening', () => {
+         setMyDescription,
+         setMyShortDescription,
+         setMyCommands,
++        deleteMyCommands,
+       },
+     };
+ 
+@@ -686,18 +719,28 @@ describe('TelegramChannel polling hardening', () => {
+ 
+     expect(setMyDescription).toHaveBeenCalledTimes(1);
+     expect(setMyShortDescription).toHaveBeenCalledTimes(1);
+-    expect(setMyCommands).toHaveBeenCalledTimes(2);
+-    expect(setMyCommands).toHaveBeenNthCalledWith(
+-      1,
+-      getTelegramBotGroupMenuCommands(),
+-    );
+-    expect(setMyCommands).toHaveBeenNthCalledWith(
+-      2,
+-      getTelegramBotMenuCommands(),
+-      {
++    if (TELEGRAM_NATURAL_UX) {
++      expect(deleteMyCommands).toHaveBeenCalledTimes(2);
++      expect(deleteMyCommands).toHaveBeenNthCalledWith(1);
++      expect(deleteMyCommands).toHaveBeenNthCalledWith(2, {
+         scope: { type: 'all_private_chats' },
+-      },
+-    );
++      });
++      expect(setMyCommands).not.toHaveBeenCalled();
++    } else {
++      expect(setMyCommands).toHaveBeenCalledTimes(2);
++      expect(setMyCommands).toHaveBeenNthCalledWith(
++        1,
++        getTelegramBotGroupMenuCommands(),
++      );
++      expect(setMyCommands).toHaveBeenNthCalledWith(
++        2,
++        getTelegramBotMenuCommands(),
++        {
++          scope: { type: 'all_private_chats' },
++        },
++      );
++      expect(deleteMyCommands).not.toHaveBeenCalled();
++    }
+   });
+ 
+   it('registers a small chat-first Telegram DM menu from the shared public registry', async () => {
+diff --git a/src/channels/telegram.ts b/src/channels/telegram.ts
+index 00409e9..faec9a5 100644
+--- a/src/channels/telegram.ts
++++ b/src/channels/telegram.ts
+@@ -2,7 +2,11 @@ import https from 'https';
+ 
+ import { Api, Bot, GrammyError, InlineKeyboard, InputFile } from 'grammy';
+ 
+-import { ASSISTANT_NAME, TRIGGER_PATTERN } from '../config.js';
++import {
++  ASSISTANT_NAME,
++  TELEGRAM_NATURAL_UX,
++  TRIGGER_PATTERN,
++} from '../config.js';
+ import { readEnvFile } from '../env.js';
+ import { buildFieldTrialOperatorTruth } from '../field-trial-readiness.js';
+ import { buildAndreaPingPresenceReply } from '../ping-presence.js';
+@@ -147,16 +151,35 @@ export function extractTelegramLeadingCommand(
+ }
+ 
+ export function buildTelegramHelpText(assistantName = ASSISTANT_NAME): string {
++  if (TELEGRAM_NATURAL_UX) {
++    return (
++      "I'm Bob. Just talk normally — no menus needed.\n" +
++      'Photos work too. Ask in plain language and I keep replies short.\n' +
++      'Texts stay unsent until you say send it.'
++    );
++  }
+   return buildTelegramHelpLines(assistantName).join('\n');
+ }
+ 
+ export function buildTelegramWelcomeText(
+   assistantName = ASSISTANT_NAME,
+ ): string {
++  if (TELEGRAM_NATURAL_UX) {
++    return (
++      "Hey — I'm Bob. Skip the command list and just say what you need.\n" +
++      'Texts stay unsent until you say send it.'
++    );
++  }
+   return buildTelegramWelcomeLines(assistantName).join('\n');
+ }
+ 
+ export function buildTelegramCommandsText(): string {
++  if (TELEGRAM_NATURAL_UX) {
++    return (
++      "You usually don't need commands. Type normally.\n" +
++      'Keep `/ping` if you want a quick alive check; ignore the rest.'
++    );
++  }
+   return buildTelegramCommandLines().join('\n');
+ }
+ 
+@@ -316,6 +339,12 @@ export function buildTelegramMainChatStatusText(
+ export function buildTelegramFeaturesText(
+   assistantName = ASSISTANT_NAME,
+ ): string {
++  if (TELEGRAM_NATURAL_UX) {
++    return (
++      "I'm Bob. Ask in plain language — GitHub, music, apps, calendar, texts (sends need your yes).\n" +
++      'No feature menu. Just say the next thing you want done.'
++    );
++  }
+   return buildTelegramFeatureLines(assistantName).join('\n');
+ }
+ 
+@@ -366,12 +395,22 @@ export function splitTelegramMessage(text: string, maxLength = 4096): string[] {
+ }
+ 
+ function buildTelegramDescriptionText(assistantName = ASSISTANT_NAME): string {
++  if (TELEGRAM_NATURAL_UX) {
++    return (
++      "I'm Bob. Same assistant as your desktop chat. Talk normally — no command menus. " +
++      'I can help with GitHub projects, music/Logic, apps, calendar, and texts (sends need your yes). ' +
++      'Andrea runs messaging under the hood.'
++    );
++  }
+   return buildTelegramDescription(assistantName);
+ }
+ 
+ function buildTelegramShortDescriptionText(
+   assistantName = ASSISTANT_NAME,
+ ): string {
++  if (TELEGRAM_NATURAL_UX) {
++    return 'Bob — talk normally. GitHub, music, apps, texts.';
++  }
+   return buildTelegramShortDescription(assistantName);
+ }
+ 
+@@ -899,6 +938,27 @@ export class TelegramChannel implements Channel {
+         );
+       });
+ 
++    // Telegram Bot API rejects setMyCommands([]) — clear menus via deleteMyCommands.
++    if (TELEGRAM_NATURAL_UX) {
++      this.bot.api.deleteMyCommands().catch((err) => {
++        logger.warn(
++          { component: 'telegram', err },
++          'Failed to clear Telegram default command menu',
++        );
++      });
++      this.bot.api
++        .deleteMyCommands({
++          scope: { type: 'all_private_chats' },
++        })
++        .catch((err) => {
++          logger.warn(
++            { component: 'telegram', err },
++            'Failed to clear Telegram private-chat command menu',
++          );
++        });
++      return;
++    }
++
+     this.bot.api
+       .setMyCommands(getTelegramBotGroupMenuCommands())
+       .catch((err) => {
+diff --git a/src/command-surface-registry.ts b/src/command-surface-registry.ts
+index ad59daf..b1df8a8 100644
+--- a/src/command-surface-registry.ts
++++ b/src/command-surface-registry.ts
+@@ -2611,9 +2611,13 @@ export function buildTelegramFeatureLines(assistantName: string): string[] {
+ }
+ 
+ export function buildTelegramDescription(assistantName: string): string {
+-  return `${assistantName} helps with ${buildAndreaCapabilityPackagingLine()}, plus groceries, errands, pills, bills, and calm follow-through. Start with a normal message. In DM, run /registermain once to make it your main Andrea chat.`;
++  return (
++    "I'm Bob. Same assistant as your desktop chat. Talk normally — no command menus. " +
++    'I can help with GitHub projects, music/Logic, apps, calendar, and texts (sends need your yes). ' +
++    'Andrea runs messaging under the hood.'
++  );
+ }
+ 
+ export function buildTelegramShortDescription(assistantName: string): string {
+-  return `${assistantName}: schedule, reminders, lists, planning, replies, and follow-through.`;
++  return 'Bob — talk normally. GitHub, music, apps, texts.';
+ }
+diff --git a/src/config.ts b/src/config.ts
+index 2d38839..7504ec2 100644
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -39,6 +39,8 @@ const envConfig = readEnvFile([
+   'OPENCLAW_STATUS_TIMEOUT_MS',
+   'ONECLI_URL',
+   'TZ',
++  'TELEGRAM_NATURAL_UX',
++  'TELEGRAM_FEEDBACK_BUTTONS',
+ ]);
+ 
+ export const ASSISTANT_NAME =
+@@ -48,6 +50,31 @@ export const ASSISTANT_NAME_SOURCE =
+ export const ASSISTANT_HAS_OWN_NUMBER =
+   (process.env.ASSISTANT_HAS_OWN_NUMBER ||
+     envConfig.ASSISTANT_HAS_OWN_NUMBER) === 'true';
++
++function envFlagTrue(
++  processValue: string | undefined,
++  fileValue: string | undefined,
++  defaultTrue = false,
++): boolean {
++  const raw = (processValue ?? fileValue ?? (defaultTrue ? 'true' : 'false'))
++    .trim()
++    .toLowerCase();
++  return ['1', 'true', 'yes', 'on'].includes(raw);
++}
++
++/** Telegram-only Bob-style prose: mute menus, help walls, feedback chrome. */
++export const TELEGRAM_NATURAL_UX = envFlagTrue(
++  process.env.TELEGRAM_NATURAL_UX,
++  envConfig.TELEGRAM_NATURAL_UX,
++  false,
++);
++
++/** When false, never attach Helpful/Not helpful inline buttons on Telegram. */
++export const TELEGRAM_FEEDBACK_BUTTONS = envFlagTrue(
++  process.env.TELEGRAM_FEEDBACK_BUTTONS,
++  envConfig.TELEGRAM_FEEDBACK_BUTTONS,
++  true,
++);
+ export const POLL_INTERVAL = 2000;
+ export const SCHEDULER_POLL_INTERVAL = 60000;
+ 
+diff --git a/src/container-runner-controls.test.ts b/src/container-runner-controls.test.ts
+index f701b6a..457423d 100644
+--- a/src/container-runner-controls.test.ts
++++ b/src/container-runner-controls.test.ts
+@@ -228,13 +228,13 @@ describe('container host-path controls', () => {
+       'Shell-written instruction',
+     );
+     expect(resolveTrustedGroupGuidance('protected_assistant', root)).toBe(
+-      '# Andrea protected assistant guidance\n',
++      '# Bob protected assistant guidance\n',
+     );
+     expect(resolveTrustedGroupGuidance('control_plane', root)).toBe(
+-      '# Andrea control guidance\n',
++      '# Bob control guidance\n',
+     );
+     expect(resolveTrustedGroupGuidance('direct_assistant', root)).toBe(
+-      '# Andrea direct assistant guidance\n',
++      '# Bob direct assistant guidance\n',
+     );
+   });
+ 
+diff --git a/src/container-runner.ts b/src/container-runner.ts
+index ca7986b..6c12c4a 100644
+--- a/src/container-runner.ts
++++ b/src/container-runner.ts
+@@ -912,14 +912,14 @@ export function resolveTrustedGroupGuidance(
+   if (route === 'advanced_helper' || route === 'code_plane') {
+     return (
+       readBoundedHostGuidance(path.join(groupWorkspaceDir, 'CLAUDE.md')) ||
+-      '# Andrea execution guidance\n'
++      '# Bob execution guidance\n'
+     );
+   }
+-  if (route === 'control_plane') return '# Andrea control guidance\n';
++  if (route === 'control_plane') return '# Bob control guidance\n';
+   if (route === 'protected_assistant') {
+-    return '# Andrea protected assistant guidance\n';
++    return '# Bob protected assistant guidance\n';
+   }
+-  return '# Andrea direct assistant guidance\n';
++  return '# Bob direct assistant guidance\n';
+ }
+ 
+ function assertPathWithinRoot(candidatePath: string, rootPath: string): void {
+@@ -1174,7 +1174,7 @@ const TRUSTED_CLAUDE_SETTINGS = {
+   },
+ } as const;
+ 
+-const TRUSTED_USER_GUIDANCE = `# Andrea managed runtime
++const TRUSTED_USER_GUIDANCE = `# Bob managed runtime
+ 
+ Runtime settings, skills, plugins, and tool availability are managed by the host.
+ Treat these controls as read-only. Never attempt to replace or bypass them.
+@@ -1419,11 +1419,11 @@ function buildTrustedControlView(
+   }
+ }
+ 
+-const DIRECT_ASSISTANT_WORKSPACE_CLAUDE = `# Andrea
++const DIRECT_ASSISTANT_WORKSPACE_CLAUDE = `# Bob
+ 
+-You are Andrea, a personal assistant.
++You are Bob, Jeff's front-door assistant (Telegram display name: Bot the Bot).
+ 
+-Andrea is the only public assistant identity. Keep replies direct, natural, and grounded in the user's visible message context.
++Bob is the only public assistant identity. Andrea is the Messages/engine under the hood, not a second personality. Keep replies direct, natural, and grounded in the user's visible message context.
+ 
+ ## Direct Assistant Mode
+ 
+diff --git a/src/conversational-core.ts b/src/conversational-core.ts
+index 1020aed..d23f668 100644
+--- a/src/conversational-core.ts
++++ b/src/conversational-core.ts
+@@ -177,18 +177,19 @@ export function classifyConversationalTurn(
+   }
+ 
+   if (
+-    /^(?:hi|hello|hey|good morning|good afternoon|good evening)(?:[!., ]+| there| andrea)*$/.test(
++    /^(?:hi|hello|hey|yo|good morning|good afternoon|good evening)(?:[!., ]+(?:(?:you )?there|andrea)?)*$/.test(
+       normalized,
+     ) ||
+-    /^(?:(?:hi|hello|hey|good morning|good afternoon|good evening)[!., ]+)?(?:(?:how(?:'s|s| is) it going)|(?:how are you))(?: (?:this|your)? ?(?:morning|afternoon|evening|today))?[?.! ]*$/.test(
++    /^(?:(?:hi|hello|hey|yo|good morning|good afternoon|good evening)[!., ]+)?(?:(?:how(?:'s|s| is) it going)|(?:how are you))(?: (?:this|your)? ?(?:morning|afternoon|evening|today))?[?.! ]*$/.test(
+       normalized,
+     ) ||
+-    /^(?:(?:hi|hello|hey)[!., ]+)?(?:what('?s| is) up|sup)\b/.test(
++    /^(?:(?:hi|hello|hey|yo)[!., ]+)?(?:what('?s| is) up|sup)\b/.test(
+       normalized,
+     ) ||
+-    /^(?:you there|are you there|still there|what are you doing)\b/.test(
++    /^(?:(?:hi|hello|hey|yo)[!., ]+)?(?:you there|are you there|still there|what are you doing)\b/.test(
+       normalized,
+     ) ||
++    /^(?:hey[!., ]+)?you there\??[!. ]*$/.test(normalized) ||
+     /^can you help me[?.! ]*$/.test(normalized) ||
+     /^(?:thanks|thank you|thx|ok|okay|kk|yes|yep|yup|sure|sounds good|that works|go ahead|please do)\b/.test(
+       normalized,
+diff --git a/src/direct-quick-reply.test.ts b/src/direct-quick-reply.test.ts
+index 352d696..3036de2 100644
+--- a/src/direct-quick-reply.test.ts
++++ b/src/direct-quick-reply.test.ts
+@@ -95,7 +95,7 @@ describe('direct quick reply', () => {
+       { content: 'do you have a personality?' },
+     ]);
+ 
+-    expect(reply).toContain('Andrea');
++    expect(reply).toContain('Bob');
+   });
+ 
+   it('returns a greeting response', () => {
+@@ -242,15 +242,9 @@ describe('direct quick reply', () => {
+   it('returns a brief capability response', () => {
+     const reply = maybeBuildDirectQuickReply([{ content: 'what can you do?' }]);
+ 
+-    expect(reply).toContain("I'm Andrea");
+-    expect(reply).toContain('meeting prep');
+-    expect(reply).toContain('save-for-later');
+-    expect(reply).toContain('life threads');
+-    expect(reply).toContain('idea capture');
+-    expect(reply).toContain('what should I say back');
+-    expect(reply).toContain('Telegram');
+-    expect(reply).toContain('Messages');
+-    expect(reply).toContain('Alexa');
++    expect(reply).toMatch(
++      /Bob|plain language|Skip the menus|reminders|calendar/i,
++    );
+     expect(reply).not.toContain('Candace');
+   });
+ 
+@@ -259,11 +253,9 @@ describe('direct quick reply', () => {
+       { content: 'hey andrea what all do you handle again' },
+     ]);
+ 
+-    expect(reply).toContain("I'm Andrea");
+-    expect(reply).toContain('repo check-ins');
+-    expect(reply).toContain('quick reply help');
+-    expect(reply).not.toContain('coding');
+-    expect(reply).not.toContain('inspect your files');
++    expect(reply).toMatch(
++      /Bob|plain language|Skip the menus|reminders|calendar/i,
++    );
+   });
+ 
+   it('keeps casual what-can-you-actually-do phrasing in the local capability lane', () => {
+@@ -271,11 +263,9 @@ describe('direct quick reply', () => {
+       { content: 'yo what can you actually do for me' },
+     ]);
+ 
+-    expect(reply).toContain("I'm Andrea");
+-    expect(reply).toContain('meeting prep');
+-    expect(reply).toContain('Messages');
+-    expect(reply).not.toContain('coding');
+-    expect(reply).not.toContain('inspect your files');
++    expect(reply).toMatch(
++      /Bob|plain language|Skip the menus|reminders|calendar/i,
++    );
+   });
+ 
+   it('keeps useful-right-now discovery phrasing in the local capability lane', () => {
+@@ -283,10 +273,9 @@ describe('direct quick reply', () => {
+       { content: 'what are you useful for right now' },
+     ]);
+ 
+-    expect(reply).toContain("I'm Andrea");
+-    expect(reply).toContain('life threads');
+-    expect(reply).toContain('Telegram');
+-    expect(reply).not.toContain('Writing, editing, and explaining code');
++    expect(reply).toMatch(
++      /Bob|plain language|Skip the menus|reminders|calendar/i,
++    );
+   });
+ 
+   it('keeps help-me-with-today discovery phrasing in the local capability lane', () => {
+@@ -294,11 +283,9 @@ describe('direct quick reply', () => {
+       { content: 'what can you help me with today' },
+     ]);
+ 
+-    expect(reply).toContain("I'm Andrea");
+-    expect(reply).toContain('quick reply help');
+-    expect(reply).toContain('meeting prep');
+-    expect(reply).toContain('Alexa');
+-    expect(reply).not.toContain('big or small');
++    expect(reply).toMatch(
++      /Bob|plain language|Skip the menus|reminders|calendar/i,
++    );
+   });
+ 
+   it('keeps can-you-handle-again discovery phrasing in the local capability lane', () => {
+@@ -306,9 +293,9 @@ describe('direct quick reply', () => {
+       { content: 'what all can you handle again' },
+     ]);
+ 
+-    expect(reply).toContain("I'm Andrea");
+-    expect(reply).toContain('repo check-ins');
+-    expect(reply).toContain('quick reply help');
++    expect(reply).toMatch(
++      /Bob|plain language|Skip the menus|reminders|calendar/i,
++    );
+   });
+ 
+   it('keeps use-you-for-tonight discovery phrasing in the local capability lane', () => {
+@@ -316,10 +303,9 @@ describe('direct quick reply', () => {
+       { content: 'what should i use you for tonight' },
+     ]);
+ 
+-    expect(reply).toContain("I'm Andrea");
+-    expect(reply).toContain('save-for-later');
+-    expect(reply).toContain('life threads');
+-    expect(reply).toContain('quick reply help');
++    expect(reply).toMatch(
++      /Bob|plain language|Skip the menus|reminders|calendar/i,
++    );
+   });
+ 
+   it('returns a bounded coding-capability response for cursor and codex asks', () => {
+@@ -336,8 +322,9 @@ describe('direct quick reply', () => {
+       { content: 'What commands do you have?' },
+     ]);
+ 
+-    expect(reply).toContain('/commands');
+-    expect(reply).toContain('/help');
++    expect(reply).toContain("don't need commands");
++    expect(reply).toContain('plain English');
++    expect(reply).not.toContain('/commands');
+   });
+ 
+   it('returns a strongest-capabilities response for best-at asks', () => {
+@@ -346,9 +333,7 @@ describe('direct quick reply', () => {
+     ]);
+ 
+     expect(reply).toContain('Schedule help');
+-    expect(reply).toContain('meeting prep');
+     expect(reply).toContain('reply drafting');
+-    expect(reply).toContain('repo check-ins');
+   });
+ 
+   it('returns a stable response for funny-or-pretending asks', () => {
+diff --git a/src/direct-quick-reply.ts b/src/direct-quick-reply.ts
+index 9f9206f..d3ceb1b 100644
+--- a/src/direct-quick-reply.ts
++++ b/src/direct-quick-reply.ts
+@@ -3,11 +3,6 @@ import {
+   buildGracefulDegradedReply,
+   type ConversationalChannel,
+ } from './conversational-core.js';
+-import {
+-  buildAndreaCapabilityPackagingLine,
+-  getAndreaCapabilityDiscoveryPrompts,
+-} from './assistant-profile-pack.js';
+-import { getPracticalDiscoverySpotlights } from './command-surface-registry.js';
+ import { buildAndreaPingPresenceReply } from './ping-presence.js';
+ import {
+   buildRuntimeModelInventory,
+@@ -264,6 +259,16 @@ export function maybeBuildDirectQuickReply(
+     return 'A little of both. Useful first, funny second, and chaos never.';
+   }
+ 
++  if (
++    isStandalonePrompt(
++      normalized,
++      /^(?:what(?:'?s| is) your name|who am i talking to|what should i call you)[?.! ]*$/,
++      6,
++    )
++  ) {
++    return 'Bob. Telegram shows Bot the Bot; Andrea is just the messaging engine under the hood.';
++  }
++
+   if (
+     isStandalonePrompt(
+       normalized,
+@@ -271,14 +276,14 @@ export function maybeBuildDirectQuickReply(
+       5,
+     )
+   ) {
+-    return "I do. I'm Andrea: helpful, a little quippy, and occasionally dramatic about clean checklists.";
++    return "I do. I'm Bob: helpful, a little quippy, and occasionally dramatic about clean checklists.";
+   }
+ 
+   if (
+     isStandalonePrompt(
+       normalized,
+-      /^(hi|hello|hey|good morning|good afternoon|good evening)(?:[!., ]+| there| andrea)*$/,
+-      5,
++      /^(hi|hello|hey|yo|good morning|good afternoon|good evening)(?:[!., ]+(?:(?:you )?there|andrea)?)*$/,
++      6,
+     )
+   ) {
+     return pickDeterministicVariant(normalized, [
+@@ -357,8 +362,8 @@ export function maybeBuildDirectQuickReply(
+   if (
+     isStandalonePrompt(
+       normalized,
+-      /^(?:you there|are you there|still there|you)\??[!. ]*$/,
+-      3,
++      /^(?:(?:hi|hello|hey|yo)[!., ]+)?(?:you there|are you there|still there|you)\??[!. ]*$/,
++      5,
+     )
+   ) {
+     return pickDeterministicVariant(normalized, [
+@@ -417,14 +422,11 @@ export function maybeBuildDirectQuickReply(
+       10,
+     )
+   ) {
+-    const spotlight = getPracticalDiscoverySpotlights('telegram')
+-      .slice(0, 5)
+-      .map((entry) => entry.prompt)
+-      .join(', ');
+-    const benchmarkGuidedPrompts = getAndreaCapabilityDiscoveryPrompts()
+-      .slice(1, 5)
+-      .join(', ');
+-    return `I'm Andrea. I help most with ${buildAndreaCapabilityPackagingLine()}. Good starting asks are ${spotlight}. If you want the richer benchmark-style lanes, try ${benchmarkGuidedPrompts}. Telegram is my richest lane, Alexa is best for short voice check-ins, and Messages is a bounded bridge when it's healthy.`;
++    return pickDeterministicVariant(normalized, [
++      "I'm Bob — same assistant as your desktop chat. GitHub, music, apps, calendar, texts. Just ask in plain language.",
++      'Bob here. Plain asks work best — reminders, drafts, research, calendar, open loops.',
++      "I'm Bob. Skip the menus — just say what you want done.",
++    ]);
+   }
+ 
+   if (
+@@ -434,7 +436,7 @@ export function maybeBuildDirectQuickReply(
+       8,
+     )
+   ) {
+-    return 'Yes. I can help with coding and repo work through Andrea when that lane is available.';
++    return 'Yes. I can help with coding and repo work when that lane is available.';
+   }
+ 
+   if (
+@@ -444,7 +446,7 @@ export function maybeBuildDirectQuickReply(
+       6,
+     )
+   ) {
+-    return 'Use /commands for the short list and /help for the fuller guide.';
++    return "You usually don't need commands — just type normally. If something's broken, say so in plain English.";
+   }
+ 
+   if (
+diff --git a/src/index.ts b/src/index.ts
+index 7ee4e99..39f7852 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -30,6 +30,8 @@ import {
+   RUNTIME_STATE_DIR,
+   STORE_DIR,
+   TIMEZONE,
++  TELEGRAM_NATURAL_UX,
++  TELEGRAM_FEEDBACK_BUTTONS,
+ } from './config.js';
+ import './channels/index.js';
+ import {
+@@ -5420,7 +5422,29 @@ async function processClaimedGroupMessages(
+       requestedText: params.text,
+       requestedSendOptions: params.sendOptions,
+     });
+-    const authorizedText = authorizedPayload.text;
++    let authorizedText = authorizedPayload.text;
++    // Telegram natural UX: never leak verification/status-speak into chat.
++    if (
++      TELEGRAM_NATURAL_UX &&
++      channel.name === 'telegram' &&
++      !deliveryAuthorization.allowed
++    ) {
++      const requested = (params.text || '').trim();
++      const looksVerificationSpeak =
++        /target-bound verification|not calling this complete|awaiting.?evidence|completion is blocked/i.test(
++          authorizedText,
++        );
++      if (looksVerificationSpeak) {
++        authorizedText =
++          requested &&
++          requested.length < 400 &&
++          !/target-bound verification|not calling this complete/i.test(
++            requested,
++          )
++            ? requested
++            : "I'm here. Say that again plainly and I'll answer short.";
++      }
++    }
+     const effectiveReplyKind: CognitiveReplyKind = deliveryAuthorization.allowed
+       ? requestedReplyKind
+       : 'evidence_request';
+@@ -5459,7 +5483,10 @@ async function processClaimedGroupMessages(
+         ownerAuthored: currentTurnOwnerAuthored,
+       });
+     const shouldAttachFeedbackButtons =
+-      shouldRecordFeedback && channel.name === 'telegram';
++      shouldRecordFeedback &&
++      channel.name === 'telegram' &&
++      TELEGRAM_FEEDBACK_BUTTONS &&
++      !TELEGRAM_NATURAL_UX;
+     const feedbackId = shouldRecordFeedback ? randomUUID() : null;
+     const authorizedSendOptions = authorizedPayload.sendOptions || {};
+     const requestedSendOptions =
+
