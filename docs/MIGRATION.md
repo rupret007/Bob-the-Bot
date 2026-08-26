@@ -2,36 +2,48 @@
 
 ## Starting point
 
-Bob-the-Bot began as a private repository with a single README commit. The working
-Bob behavior already existed as six commits on an Andrea development branch:
+Bob-the-Bot began as a private repository with a single README commit. Six Bob
+change sets were observed in isolated, user-owned local Andrea history: natural
+Telegram UX, BotFather copy, quick-reply formatting, public identity, guidance
+regression alignment, and natural-UX menu cleanup.
 
-1. 70a898a2f0509032993debfe37ee0636aa9a89fd — natural Bob-style Telegram UX
-2. f1f32e2a9112829b25507159078b0732fd281106 — Bob BotFather copy
-3. 274a67cdbda12fca6cf566f7ccc2bedcb5ecebbe — quick-reply formatting
-4. d04ef01249c2c4a446caf9f5c10811cd98a49d58 — Bob public identity
-5. 0d5407e94c33037df974e9dd7064e3c828a2b58b — guidance regression alignment
-6. 723a793b78513c979b866dd589f63d06add37897 — natural UX menu cleanup
+Those local commit objects are not reachable from an Andrea origin ref and are not
+an authoritative or portable dependency. Their raw IDs and machine-local author
+metadata are intentionally omitted. The reviewed overlay below is the sanitized,
+self-contained preservation boundary.
 
 ## Reconciliation result
 
-All six commits replayed cleanly, in order, onto authoritative Andrea main
+All six local change sets reconciled cleanly, in order, onto authoritative Andrea main
 f8655e2da59d1db8bd3777758ae8220ecb65d847. No older branch-only commit was
-required. The combined result modifies 15 existing source, test, and group-guidance
-files and produces Git tree 6c193efa849e16392c4ba179c261cdcb6bc7aa17.
+required. The reviewed result modifies 21 existing source, test, and group-guidance
+files and produces Git tree 58f3e0a88ddd0d60a613331f0bc266aea5d51d04.
 
-The combined patch is preserved rather than copying the Andrea tree. Its digest,
-scope, source commits, base, and result tree are locked in the versioned contract.
+The combined patch is preserved rather than copying the Andrea tree. Its SHA-256
+digest, derived stable patch ID, scope, public base, and result tree are locked in
+the versioned contract and are the authoritative replay evidence.
 The first acceptance run also exposed stale inherited expectations for Bob's
 natural command-free copy. The overlay includes the narrow test alignment and makes
 the send-approval requirement visible in short Telegram help, welcome, and feature
 copy.
 
+Independent review then found that natural-UX cleanup could restore a short
+requested completion after delivery authorization had denied it. The repair moves
+plain denied wording into the payload resolver, never reuses the requested claim or
+controls, and adds a focused false-completion regression test. Draft head
+42440481d832991db323a919031cf075a23c2d8f is superseded and must not be approved.
+The complete offline suite also exposed four stale identity assertions and a real
+default-trigger regression: with Bob configured, explicit @openclaw addressing no
+longer matched. The reconciliation now preserves that guarded alias and makes the
+affected expectations identity-aware.
+
 ## Safe update procedure
 
 1. Start with a fresh disposable clone of the new Andrea main.
-2. Reconcile the six source changes or the latest reviewed replacement.
+2. Start from the current reviewed overlay or a separately reviewed supported replacement.
 3. Run the strongest offline Andrea tests before exporting an overlay.
-4. Replace the patch, engine pin, digest, touched-path allowlist, and result tree together.
+4. Replace the patch, engine pin, digest, derived patch ID, touched-path allowlist,
+   and result tree together.
 5. Run npm run check and the disposable-engine acceptance suite.
 6. Review the full diff for secrets, local paths, generated files, authority drift,
    unsafe links, and misleading readiness claims.

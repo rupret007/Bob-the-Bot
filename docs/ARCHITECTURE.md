@@ -25,17 +25,24 @@ This repository does not own:
 
 ## Reproducible integration contract
 
-contracts/bob-app.v1.json binds five facts:
+contracts/bob-app.v1.json binds six reproducible facts:
 
 1. The exact public Andrea engine base commit.
 2. The exact SHA-256 digest of the Bob overlay.
-3. The complete allowlist of modified engine paths.
-4. The exact Git tree expected after the overlay is applied.
-5. Safety flags that must all remain false for live requirements and default sends.
+3. The stable Git patch ID derived from that overlay.
+4. The complete allowlist of modified engine paths.
+5. The exact Git tree expected after the overlay is applied.
+6. Safety flags that must all remain false for live requirements and default sends.
 
 Verification fails before tests when any of those facts drift. The overlay may
 modify only existing text files under src or groups. New files, deleted files,
 renames, binary patches, local paths, and credential-shaped content are rejected.
+
+Six Bob change sets were observed only as local unpublished history during the
+reconciliation. They are recorded as sanitized, non-authoritative provenance: the
+contract asserts no remote reachability and includes no raw object IDs or local
+author metadata. The public base plus overlay digest, derived patch ID, and result
+tree are the authoritative replay evidence.
 
 ## Runtime relationship
 
@@ -54,6 +61,10 @@ The overlay does not widen authority. Existing engine tests remain the source of
 truth for routing and exact send authorization. CI adds a Bob-specific acceptance
 slice over those tests, with live communication disabled and the network guard
 loaded.
+
+Natural Telegram wording is selected inside the denied-delivery payload resolver.
+It never substitutes the original requested completion after authorization has
+failed, and denied controls remain discarded before the send boundary.
 
 Only an explicit owner decision can authorize a merge. A merge still does not
 authorize deployment, messaging, provider use, credentials, settings, gateway

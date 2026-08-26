@@ -28,11 +28,14 @@ application runtime.
 
 ## What is included
 
-- contracts/bob-app.v1.json pins the engine, overlay digest, result tree, and file scope.
-- patches/andrea-bob-overlay.patch preserves the six existing Bob identity and
-  natural Telegram UX commits reconciled onto the current engine.
+- contracts/bob-app.v1.json pins the engine, overlay digest, derived stable patch
+  ID, result tree, and file scope.
+- patches/andrea-bob-overlay.patch preserves six local historical Bob identity
+  and natural Telegram UX change sets reconciled onto the current engine. Their
+  unpublished object IDs are not replay dependencies and are intentionally omitted.
 - config/bob.env.example contains non-secret, fail-closed product defaults only.
-- scripts/verify-contract.mjs rejects base, patch, tree, scope, and safety drift.
+- scripts/verify-contract.mjs rejects base, patch digest, derived patch ID, tree,
+  scope, provenance, and safety drift.
 - CI applies the overlay only to a disposable pinned engine checkout, then runs
   offline identity, routing, OpenClaw, and send-authorization tests.
 
@@ -59,6 +62,8 @@ checkout. Never point it at an active or user-owned Andrea worktree.
 - Outbound messaging, control APIs, and the OpenAI backend are disabled in the
   example. CI has no credentials and loads Andrea's network guard.
 - Tests use Andrea's network guard and mocked adapters.
+- A denied completion always becomes a non-completion fallback before Telegram
+  natural-UX wording is selected; the original claim and controls cannot reach send.
 - No merge authorizes a live send, gateway restart, settings change, deployment,
   provider call, or production action.
 - Updating the engine pin or overlay invalidates the recorded proof and requires a

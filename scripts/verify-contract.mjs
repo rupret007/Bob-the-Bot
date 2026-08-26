@@ -39,6 +39,7 @@ try {
         engineBase: report.engineBase || null,
         resultTree: report.resultTree || null,
         overlaySha256: report.overlaySha256,
+        overlayPatchId: report.overlayPatchId,
         touchedPaths: report.touchedPaths.length,
         liveActions: 0,
       },

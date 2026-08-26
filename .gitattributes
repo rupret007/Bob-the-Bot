@@ -1,2 +1,2 @@
 # Unified-diff payload lines intentionally carry a one-character prefix.
-patches/*.patch -whitespace
+patches/*.patch text eol=lf -whitespace

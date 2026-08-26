@@ -61,6 +61,11 @@ jobs:
           src/assistant-routing.test.ts
           src/channels/telegram.test.ts
           src/channels/bluebubbles.test.ts
+          src/cognitive-runtime-completion.test.ts
           src/container-runner-controls.test.ts
+          src/formatting.test.ts
           src/send-authorization-fence.test.ts
           src/openclaw-andrea-bridge.test.ts
+          src/telegram-roundtrip.test.ts
+          src/user-facing-fallback.test.ts
+          src/alexa.test.ts

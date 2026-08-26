@@ -19,16 +19,16 @@
   },
   "overlay": {
     "path": "patches/andrea-bob-overlay.patch",
-    "sha256": "cc10bb886364e3d57dea695f5558ec3fee64b39ec8b271f3b9a4c080db300750",
-    "expectedResultTree": "6c193efa849e16392c4ba179c261cdcb6bc7aa17",
-    "sourceCommits": [
-      "70a898a2f0509032993debfe37ee0636aa9a89fd",
-      "f1f32e2a9112829b25507159078b0732fd281106",
-      "274a67cdbda12fca6cf566f7ccc2bedcb5ecebbe",
-      "d04ef01249c2c4a446caf9f5c10811cd98a49d58",
-      "0d5407e94c33037df974e9dd7064e3c828a2b58b",
-      "723a793b78513c979b866dd589f63d06add37897"
-    ],
+    "sha256": "e129cc36c3599000014b359bbf5a1ebce04ded373e2cce61fb5824f8a32ac85f",
+    "patchId": "f6f1d4cb4e238485f5cd96b672c5bb30d2c73b16",
+    "expectedResultTree": "58f3e0a88ddd0d60a613331f0bc266aea5d51d04",
+    "historicalProvenance": {
+      "classification": "local_unpublished_history",
+      "changeCount": 6,
+      "remoteReachability": "not_asserted",
+      "authoritativeForReplay": false,
+      "rawCommitIdsIncluded": false
+    },
     "refinement": {
       "purpose": "Align inherited tests with Bob natural UX and keep send approval visible in short Telegram copy.",
       "files": [
@@ -37,14 +37,35 @@
         "src/direct-quick-reply.test.ts"
       ]
     },
+    "securityRepair": {
+      "purpose": "Keep denied completion claims behind the authorization fallback for Telegram natural UX.",
+      "files": [
+        "src/cognitive-runtime-completion.test.ts",
+        "src/cognitive-runtime-completion.ts",
+        "src/index.ts"
+      ]
+    },
+    "compatibilityRepair": {
+      "purpose": "Preserve explicit OpenClaw addressing and align identity-aware full-suite expectations.",
+      "files": [
+        "src/alexa.test.ts",
+        "src/config.ts",
+        "src/formatting.test.ts",
+        "src/telegram-roundtrip.test.ts",
+        "src/user-facing-fallback.test.ts"
+      ]
+    },
     "touchedPaths": [
       "groups/global/CLAUDE.md",
       "groups/main/CLAUDE.md",
+      "src/alexa.test.ts",
       "src/assistant-personalization.ts",
       "src/assistant-routing.ts",
       "src/channels/bluebubbles.ts",
       "src/channels/telegram.test.ts",
       "src/channels/telegram.ts",
+      "src/cognitive-runtime-completion.test.ts",
+      "src/cognitive-runtime-completion.ts",
       "src/command-surface-registry.ts",
       "src/config.ts",
       "src/container-runner-controls.test.ts",
@@ -52,7 +73,10 @@
       "src/conversational-core.ts",
       "src/direct-quick-reply.test.ts",
       "src/direct-quick-reply.ts",
-      "src/index.ts"
+      "src/formatting.test.ts",
+      "src/index.ts",
+      "src/telegram-roundtrip.test.ts",
+      "src/user-facing-fallback.test.ts"
     ]
   },
   "safety": {

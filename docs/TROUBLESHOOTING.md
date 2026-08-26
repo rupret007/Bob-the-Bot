@@ -16,6 +16,12 @@ The patch changed without a reviewed contract update. Inspect the full patch. If
 change is intentional, regenerate the digest, touched-path allowlist, and expected
 result tree from one reviewed reconciliation.
 
+## Overlay patch ID mismatch
+
+The content-normalized Git patch identity does not match the contract. Do not paste
+in a plausible 40-character value. Regenerate it from the reviewed overlay and
+confirm the SHA-256 digest, scope, and result tree in the same review.
+
 ## Patch does not apply
 
 The Andrea engine moved or the patch was edited. Reconcile against the new engine in
@@ -37,3 +43,7 @@ Do not enable a live dependency to turn CI green.
 
 Report the branch as locally verified or hosted pending. A queued integration with
 no test job is not green or red, and it authorizes no merge or live action.
+
+If GitHub creates a job with zero steps and no runner, inspect its annotation. A
+payment or spending-limit annotation is billing-blocked, not a code failure. Do not
+rerun it until billing is confirmed fixed; retain the complete local proof record.

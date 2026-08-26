@@ -90,6 +90,19 @@ index 8da10d1..9402c53 100644
      "added_at": "2026-01-31T12:00:00Z",
      "containerConfig": {
        "additionalMounts": [
+diff --git a/src/alexa.test.ts b/src/alexa.test.ts
+index 4e3370d..8167cbd 100644
+--- a/src/alexa.test.ts
++++ b/src/alexa.test.ts
+@@ -2446,7 +2446,7 @@ describe('createAlexaSkill', () => {
+     );
+ 
+     expect(extractSpeechText(response)).toContain(
+-      'Andrea can save "Candace still needs a dinner answer tonight, and pickup works better after re..." for later. Want me to keep it?',
++      `${ASSISTANT_NAME} can save "Candace still needs a dinner answer tonight, and pickup works better after re..." for later. Want me to keep it?`,
+     );
+     expect(mockedRunAlexaAssistantTurn).not.toHaveBeenCalled();
+   });
 diff --git a/src/assistant-personalization.ts b/src/assistant-personalization.ts
 index 0ffcbdb..717fe77 100644
 --- a/src/assistant-personalization.ts
@@ -471,6 +484,72 @@ index 00409e9..faec9a5 100644
      this.bot.api
        .setMyCommands(getTelegramBotGroupMenuCommands())
        .catch((err) => {
+diff --git a/src/cognitive-runtime-completion.test.ts b/src/cognitive-runtime-completion.test.ts
+index 1040a29..d560119 100644
+--- a/src/cognitive-runtime-completion.test.ts
++++ b/src/cognitive-runtime-completion.test.ts
+@@ -202,6 +202,32 @@ describe('adaptive runtime completion evidence', () => {
+     );
+   });
+ 
++  it('never restores a denied false completion claim for Telegram natural UX', () => {
++    const kernel = beginKernel({ executionMode: 'prepare_only' });
++    const originalText = 'Everything is complete and already delivered.';
++    const authorization = authorizeCognitiveReplyDelivery({
++      cognitiveRun: kernel,
++      replyKind: 'completion',
++    });
++    const payload = resolveCognitiveDeliveryPayload({
++      authorization,
++      requestedText: originalText,
++      requestedSendOptions: { inlineActionRows: [['unsafe-control']] },
++      deniedTextStyle: 'telegram_natural',
++    });
++    const send = vi.fn();
++
++    send(payload.text, payload.sendOptions);
++
++    expect(authorization.allowed).toBe(false);
++    expect(payload.text).toBe(
++      "I can't confirm that yet. Tell me what to check next.",
++    );
++    expect(payload.text).not.toMatch(/complete|delivered/u);
++    expect(send.mock.calls.some(([text]) => text === originalText)).toBe(false);
++    expect(send).toHaveBeenCalledWith(payload.text, undefined);
++  });
++
+   it('rejects a packet bound to the wrong cognitive run or source turn', () => {
+     const now = new Date();
+     const kernel = beginKernel();
+diff --git a/src/cognitive-runtime-completion.ts b/src/cognitive-runtime-completion.ts
+index 2f38f52..89f7370 100644
+--- a/src/cognitive-runtime-completion.ts
++++ b/src/cognitive-runtime-completion.ts
+@@ -12,15 +12,23 @@ import type { VerifiedDeepWorkPacket } from './types.js';
+ 
+ const MAX_RUNTIME_COMPLETION_EVIDENCE_AGE_MS = 5 * 60 * 1000;
+ const MAX_FUTURE_CLOCK_SKEW_MS = 5_000;
++const TELEGRAM_NATURAL_UX_DENIED_TEXT =
++  "I can't confirm that yet. Tell me what to check next.";
+ 
+ /** Applies a completed pre-send decision without retaining denied controls. */
+ export function resolveCognitiveDeliveryPayload<TSendOptions>(input: {
+   authorization: CognitiveDeliveryAuthorization;
+   requestedText: string;
+   requestedSendOptions?: TSendOptions;
++  deniedTextStyle?: 'authorization' | 'telegram_natural';
+ }): { text: string; sendOptions?: TSendOptions } {
+   if (!input.authorization.allowed) {
+-    return { text: input.authorization.safeFallbackText };
++    return {
++      text:
++        input.deniedTextStyle === 'telegram_natural'
++          ? TELEGRAM_NATURAL_UX_DENIED_TEXT
++          : input.authorization.safeFallbackText,
++    };
+   }
+   return {
+     text: input.requestedText,
 diff --git a/src/command-surface-registry.ts b/src/command-surface-registry.ts
 index ad59daf..b1df8a8 100644
 --- a/src/command-surface-registry.ts
@@ -492,7 +571,7 @@ index ad59daf..b1df8a8 100644
 +  return 'Bob — talk normally. GitHub, music, apps, texts.';
  }
 diff --git a/src/config.ts b/src/config.ts
-index 2d38839..7504ec2 100644
+index 2d38839..bb9111f 100644
 --- a/src/config.ts
 +++ b/src/config.ts
 @@ -39,6 +39,8 @@ const envConfig = readEnvFile([
@@ -536,6 +615,18 @@ index 2d38839..7504ec2 100644
  export const POLL_INTERVAL = 2000;
  export const SCHEDULER_POLL_INTERVAL = 60000;
  
+@@ -273,7 +300,10 @@ function escapeRegex(str: string): string {
+ 
+ export function buildTriggerPattern(trigger: string): RegExp {
+   const normalized = trigger.trim();
+-  if (normalized.toLowerCase() === '@andrea') {
++  if (
++    normalized.toLowerCase() === '@andrea' ||
++    normalized.toLowerCase() === `@${ASSISTANT_NAME}`.toLowerCase()
++  ) {
+     return new RegExp(
+       `^(?:${escapeRegex(normalized)}|${escapeRegex('@openclaw')})\\b`,
+       'i',
 diff --git a/src/container-runner-controls.test.ts b/src/container-runner-controls.test.ts
 index f701b6a..457423d 100644
 --- a/src/container-runner-controls.test.ts
@@ -633,10 +724,31 @@ index 1020aed..d23f668 100644
      /^(?:thanks|thank you|thx|ok|okay|kk|yes|yep|yup|sure|sounds good|that works|go ahead|please do)\b/.test(
        normalized,
 diff --git a/src/direct-quick-reply.test.ts b/src/direct-quick-reply.test.ts
-index 352d696..3036de2 100644
+index 352d696..4f087a3 100644
 --- a/src/direct-quick-reply.test.ts
 +++ b/src/direct-quick-reply.test.ts
-@@ -95,7 +95,7 @@ describe('direct quick reply', () => {
+@@ -8,6 +8,20 @@ import {
+ import { buildAndreaPingPresenceReply } from './ping-presence.js';
+ import type { RuntimeModelInventory } from './model-self-knowledge.js';
+ 
++const BOB_CAPABILITY_REPLIES = [
++  "I'm Bob — same assistant as your desktop chat. GitHub, music, apps, calendar, texts. Just ask in plain language.",
++  'Bob here. Plain asks work best — reminders, drafts, research, calendar, open loops.',
++  "I'm Bob. Skip the menus — ask for a reminder, a draft, or a repo check.",
++] as const;
++
++function expectBobCapabilityReply(reply: string | null): void {
++  expect(BOB_CAPABILITY_REPLIES).toContain(reply);
++  expect(reply).toMatch(/^Bob here\.|^I'm Bob/u);
++  expect(reply).toMatch(
++    /GitHub|calendar|reminders|drafts|research|reminder|draft|repo check/u,
++  );
++}
++
+ describe('direct quick reply', () => {
+   const modelInventory: RuntimeModelInventory = {
+     defaultModel: 'MiniMax-M3',
+@@ -95,7 +109,7 @@ describe('direct quick reply', () => {
        { content: 'do you have a personality?' },
      ]);
  
@@ -645,7 +757,7 @@ index 352d696..3036de2 100644
    });
  
    it('returns a greeting response', () => {
-@@ -242,15 +242,9 @@ describe('direct quick reply', () => {
+@@ -242,15 +256,7 @@ describe('direct quick reply', () => {
    it('returns a brief capability response', () => {
      const reply = maybeBuildDirectQuickReply([{ content: 'what can you do?' }]);
  
@@ -658,13 +770,11 @@ index 352d696..3036de2 100644
 -    expect(reply).toContain('Telegram');
 -    expect(reply).toContain('Messages');
 -    expect(reply).toContain('Alexa');
-+    expect(reply).toMatch(
-+      /Bob|plain language|Skip the menus|reminders|calendar/i,
-+    );
++    expectBobCapabilityReply(reply);
      expect(reply).not.toContain('Candace');
    });
  
-@@ -259,11 +253,9 @@ describe('direct quick reply', () => {
+@@ -259,11 +265,7 @@ describe('direct quick reply', () => {
        { content: 'hey andrea what all do you handle again' },
      ]);
  
@@ -673,13 +783,11 @@ index 352d696..3036de2 100644
 -    expect(reply).toContain('quick reply help');
 -    expect(reply).not.toContain('coding');
 -    expect(reply).not.toContain('inspect your files');
-+    expect(reply).toMatch(
-+      /Bob|plain language|Skip the menus|reminders|calendar/i,
-+    );
++    expectBobCapabilityReply(reply);
    });
  
    it('keeps casual what-can-you-actually-do phrasing in the local capability lane', () => {
-@@ -271,11 +263,9 @@ describe('direct quick reply', () => {
+@@ -271,11 +273,7 @@ describe('direct quick reply', () => {
        { content: 'yo what can you actually do for me' },
      ]);
  
@@ -688,13 +796,11 @@ index 352d696..3036de2 100644
 -    expect(reply).toContain('Messages');
 -    expect(reply).not.toContain('coding');
 -    expect(reply).not.toContain('inspect your files');
-+    expect(reply).toMatch(
-+      /Bob|plain language|Skip the menus|reminders|calendar/i,
-+    );
++    expectBobCapabilityReply(reply);
    });
  
    it('keeps useful-right-now discovery phrasing in the local capability lane', () => {
-@@ -283,10 +273,9 @@ describe('direct quick reply', () => {
+@@ -283,10 +281,7 @@ describe('direct quick reply', () => {
        { content: 'what are you useful for right now' },
      ]);
  
@@ -702,13 +808,11 @@ index 352d696..3036de2 100644
 -    expect(reply).toContain('life threads');
 -    expect(reply).toContain('Telegram');
 -    expect(reply).not.toContain('Writing, editing, and explaining code');
-+    expect(reply).toMatch(
-+      /Bob|plain language|Skip the menus|reminders|calendar/i,
-+    );
++    expectBobCapabilityReply(reply);
    });
  
    it('keeps help-me-with-today discovery phrasing in the local capability lane', () => {
-@@ -294,11 +283,9 @@ describe('direct quick reply', () => {
+@@ -294,11 +289,7 @@ describe('direct quick reply', () => {
        { content: 'what can you help me with today' },
      ]);
  
@@ -717,26 +821,22 @@ index 352d696..3036de2 100644
 -    expect(reply).toContain('meeting prep');
 -    expect(reply).toContain('Alexa');
 -    expect(reply).not.toContain('big or small');
-+    expect(reply).toMatch(
-+      /Bob|plain language|Skip the menus|reminders|calendar/i,
-+    );
++    expectBobCapabilityReply(reply);
    });
  
    it('keeps can-you-handle-again discovery phrasing in the local capability lane', () => {
-@@ -306,9 +293,9 @@ describe('direct quick reply', () => {
+@@ -306,9 +297,7 @@ describe('direct quick reply', () => {
        { content: 'what all can you handle again' },
      ]);
  
 -    expect(reply).toContain("I'm Andrea");
 -    expect(reply).toContain('repo check-ins');
 -    expect(reply).toContain('quick reply help');
-+    expect(reply).toMatch(
-+      /Bob|plain language|Skip the menus|reminders|calendar/i,
-+    );
++    expectBobCapabilityReply(reply);
    });
  
    it('keeps use-you-for-tonight discovery phrasing in the local capability lane', () => {
-@@ -316,10 +303,9 @@ describe('direct quick reply', () => {
+@@ -316,10 +305,7 @@ describe('direct quick reply', () => {
        { content: 'what should i use you for tonight' },
      ]);
  
@@ -744,9 +844,7 @@ index 352d696..3036de2 100644
 -    expect(reply).toContain('save-for-later');
 -    expect(reply).toContain('life threads');
 -    expect(reply).toContain('quick reply help');
-+    expect(reply).toMatch(
-+      /Bob|plain language|Skip the menus|reminders|calendar/i,
-+    );
++    expectBobCapabilityReply(reply);
    });
  
    it('returns a bounded coding-capability response for cursor and codex asks', () => {
@@ -773,7 +871,7 @@ index 352d696..3036de2 100644
  
    it('returns a stable response for funny-or-pretending asks', () => {
 diff --git a/src/direct-quick-reply.ts b/src/direct-quick-reply.ts
-index 9f9206f..d3ceb1b 100644
+index 9f9206f..cdfa8c8 100644
 --- a/src/direct-quick-reply.ts
 +++ b/src/direct-quick-reply.ts
 @@ -3,11 +3,6 @@ import {
@@ -849,7 +947,7 @@ index 9f9206f..d3ceb1b 100644
 +    return pickDeterministicVariant(normalized, [
 +      "I'm Bob — same assistant as your desktop chat. GitHub, music, apps, calendar, texts. Just ask in plain language.",
 +      'Bob here. Plain asks work best — reminders, drafts, research, calendar, open loops.',
-+      "I'm Bob. Skip the menus — just say what you want done.",
++      "I'm Bob. Skip the menus — ask for a reminder, a draft, or a repo check.",
 +    ]);
    }
  
@@ -872,8 +970,21 @@ index 9f9206f..d3ceb1b 100644
    }
  
    if (
+diff --git a/src/formatting.test.ts b/src/formatting.test.ts
+index c4ac3ba..789934a 100644
+--- a/src/formatting.test.ts
++++ b/src/formatting.test.ts
+@@ -179,7 +179,7 @@ describe('getTriggerPattern', () => {
+     expect(pattern.test(`@${ASSISTANT_NAME} hello`)).toBe(true);
+   });
+ 
+-  it('accepts @openclaw as an alias for the default Andrea trigger', () => {
++  it('accepts @openclaw as an alias for the default assistant trigger', () => {
+     const pattern = getTriggerPattern(undefined);
+ 
+     expect(pattern.test('@openclaw search skills')).toBe(true);
 diff --git a/src/index.ts b/src/index.ts
-index 7ee4e99..39f7852 100644
+index 7ee4e99..6a48075 100644
 --- a/src/index.ts
 +++ b/src/index.ts
 @@ -30,6 +30,8 @@ import {
@@ -885,38 +996,18 @@ index 7ee4e99..39f7852 100644
  } from './config.js';
  import './channels/index.js';
  import {
-@@ -5420,7 +5422,29 @@ async function processClaimedGroupMessages(
+@@ -5419,6 +5421,10 @@ async function processClaimedGroupMessages(
+       authorization: deliveryAuthorization,
        requestedText: params.text,
        requestedSendOptions: params.sendOptions,
++      deniedTextStyle:
++        TELEGRAM_NATURAL_UX && channel.name === 'telegram'
++          ? 'telegram_natural'
++          : 'authorization',
      });
--    const authorizedText = authorizedPayload.text;
-+    let authorizedText = authorizedPayload.text;
-+    // Telegram natural UX: never leak verification/status-speak into chat.
-+    if (
-+      TELEGRAM_NATURAL_UX &&
-+      channel.name === 'telegram' &&
-+      !deliveryAuthorization.allowed
-+    ) {
-+      const requested = (params.text || '').trim();
-+      const looksVerificationSpeak =
-+        /target-bound verification|not calling this complete|awaiting.?evidence|completion is blocked/i.test(
-+          authorizedText,
-+        );
-+      if (looksVerificationSpeak) {
-+        authorizedText =
-+          requested &&
-+          requested.length < 400 &&
-+          !/target-bound verification|not calling this complete/i.test(
-+            requested,
-+          )
-+            ? requested
-+            : "I'm here. Say that again plainly and I'll answer short.";
-+      }
-+    }
+     const authorizedText = authorizedPayload.text;
      const effectiveReplyKind: CognitiveReplyKind = deliveryAuthorization.allowed
-       ? requestedReplyKind
-       : 'evidence_request';
-@@ -5459,7 +5483,10 @@ async function processClaimedGroupMessages(
+@@ -5459,7 +5465,10 @@ async function processClaimedGroupMessages(
          ownerAuthored: currentTurnOwnerAuthored,
        });
      const shouldAttachFeedbackButtons =
@@ -928,4 +1019,39 @@ index 7ee4e99..39f7852 100644
      const feedbackId = shouldRecordFeedback ? randomUUID() : null;
      const authorizedSendOptions = authorizedPayload.sendOptions || {};
      const requestedSendOptions =
-
+diff --git a/src/telegram-roundtrip.test.ts b/src/telegram-roundtrip.test.ts
+index a61ce17..6b18868 100644
+--- a/src/telegram-roundtrip.test.ts
++++ b/src/telegram-roundtrip.test.ts
+@@ -4,6 +4,7 @@ import path from 'path';
+ 
+ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+ 
++import { ASSISTANT_NAME } from './config.js';
+ import {
+   assessTelegramRoundtripState,
+   persistNanoclawHostState,
+@@ -101,7 +102,9 @@ describe('telegram roundtrip health', () => {
+     );
+ 
+     expect(
+-      evaluateTelegramPingReplies([{ id: 2, text: 'Andrea is online.' }]),
++      evaluateTelegramPingReplies([
++        { id: 2, text: `${ASSISTANT_NAME} is online.` },
++      ]),
+     ).toEqual(
+       expect.objectContaining({
+         ok: true,
+diff --git a/src/user-facing-fallback.test.ts b/src/user-facing-fallback.test.ts
+index 6b094d2..9b3b4e7 100644
+--- a/src/user-facing-fallback.test.ts
++++ b/src/user-facing-fallback.test.ts
+@@ -13,7 +13,7 @@ describe('buildSilentSuccessFallback', () => {
+       'telegram',
+     );
+ 
+-    expect(reply).toContain("I'm Andrea");
++    expect(reply).toContain("I'm Bob");
+   });
+ 
+   it('keeps direct capability fallbacks non-technical', () => {

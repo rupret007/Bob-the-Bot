@@ -13,10 +13,14 @@ const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 
 test('the reviewed Bob overlay and pinned engine contract agree', () => {
   const report = verifyStaticContract({ root });
-  assert.equal(report.touchedPaths.length, 15);
+  assert.equal(report.touchedPaths.length, 21);
   assert.equal(
     report.overlaySha256,
-    'cc10bb886364e3d57dea695f5558ec3fee64b39ec8b271f3b9a4c080db300750',
+    'e129cc36c3599000014b359bbf5a1ebce04ded373e2cce61fb5824f8a32ac85f',
+  );
+  assert.equal(
+    report.overlayPatchId,
+    'f6f1d4cb4e238485f5cd96b672c5bb30d2c73b16',
   );
 });
 
@@ -36,6 +40,36 @@ test('contract verification fails closed on undeclared file scope', () => {
     () => verifyStaticContract({ root, contract }),
     /touched paths do not match/u,
   );
+});
+
+test('contract verification derives provenance instead of trusting raw local ids', () => {
+  const arbitraryPatchId = structuredClone(readContract(root));
+  arbitraryPatchId.overlay.patchId = '0'.repeat(40);
+  assert.throws(
+    () => verifyStaticContract({ root, contract: arbitraryPatchId }),
+    /overlay patch id mismatch/u,
+  );
+
+  const rawLocalIds = structuredClone(readContract(root));
+  rawLocalIds.overlay.sourceCommits = ['0'.repeat(40)];
+  assert.throws(
+    () => verifyStaticContract({ root, contract: rawLocalIds }),
+    /raw local commit ids/u,
+  );
+});
+
+test('the overlay artifact is forced to LF and contains no carriage returns', () => {
+  const attributes = readFileSync(path.join(root, '.gitattributes'), 'utf8');
+  const patchText = readFileSync(
+    path.join(root, 'patches', 'andrea-bob-overlay.patch'),
+    'utf8',
+  );
+
+  assert.match(
+    attributes,
+    /^patches\/\*\.patch text eol=lf -whitespace$/mu,
+  );
+  assert.equal(patchText.includes('\r'), false);
 });
 
 test('the example config contains only non-secret fail-closed defaults', () => {
@@ -72,7 +106,7 @@ test('CI is read-only, pinned, offline at test time, and deployment-free', () =>
     path.join(root, '.github', 'workflows', 'ci.yml'),
     'utf8',
   );
-  assert.match(workflow, /permissions:\n  contents: read/u);
+  assert.match(workflow, /permissions:\r?\n  contents: read/u);
   assert.match(
     workflow,
     /actions\/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5/u,
@@ -108,4 +142,13 @@ test('the overlay preserves Bob identity and explicit safety language', () => {
   assert.match(patchText, /explicit approval code/u);
   assert.match(patchText, /deleteMyCommands/u);
   assert.match(patchText, /TELEGRAM_NATURAL_UX/u);
+  assert.match(patchText, /deniedTextStyle/u);
+  assert.match(
+    patchText,
+    /never restores a denied false completion claim/u,
+  );
+  assert.doesNotMatch(
+    patchText,
+    /authorizedText\s*=\s*(?:\n\s*)?requested/u,
+  );
 });

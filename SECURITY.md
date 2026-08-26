@@ -7,7 +7,7 @@ control.
 
 Allowed:
 
-- public repository identifiers and exact source commits
+- public repository identifiers, the pinned public engine base, and derived patch evidence
 - non-secret feature flags with fail-closed values
 - source overlays, deterministic tests, and sanitized documentation
 
@@ -19,6 +19,7 @@ Never commit:
 - runtime databases, transcripts, logs, backups, media, or generated builds
 - active OpenClaw, Telegram, Messages, or Andrea configuration
 - machine-specific paths
+- unpublished commit objects, raw local commit metadata, or machine-local author identities
 
 scripts/privacy-check.mjs enforces a conservative subset of this policy. A passing
 scan is necessary but not sufficient; review the full diff.
@@ -44,8 +45,11 @@ Those actions require a separate, explicit owner decision for the exact target.
 ## Dependency and overlay review
 
 Engine updates are reviewed as source changes, not floating dependencies. The
-contract pins the exact base and exact patched tree. Action dependencies in CI are
-pinned to full commit identifiers and workflow permissions are read-only.
+contract pins the exact public base, overlay digest, derived stable patch ID, and
+exact patched tree. Local historical changes are non-authoritative provenance, not
+remote dependencies, and their raw object IDs are not shipped. Action dependencies
+in CI are pinned to full public commit identifiers and workflow permissions are
+read-only.
 
 Report a suspected leak or unsafe behavior in a private repository issue. Do not
 paste sensitive material into a public issue, dashboard, pull request, or handoff.

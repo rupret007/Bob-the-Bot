@@ -44,6 +44,17 @@ export function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
 }
 
+export function stablePatchId(value) {
+  const output = execFileSync('git', ['patch-id', '--stable'], {
+    encoding: 'utf8',
+    input: value,
+    stdio: ['pipe', 'pipe', 'pipe'],
+  }).trim();
+  const match = /^([0-9a-f]{40})\s+[0-9a-f]{40}$/u.exec(output);
+  invariant(Boolean(match), 'overlay did not produce one stable Git patch id');
+  return match[1];
+}
+
 export function extractTouchedPaths(patchText) {
   const paths = [];
   for (const line of patchText.split(/\r?\n/u)) {
@@ -101,15 +112,23 @@ export function verifyStaticContract({
 
   const overlay = contract.overlay || {};
   invariant(DIGEST_PATTERN.test(overlay.sha256 || ''), 'invalid overlay digest');
+  invariant(SHA_PATTERN.test(overlay.patchId || ''), 'invalid overlay patch id');
   invariant(
     SHA_PATTERN.test(overlay.expectedResultTree || ''),
     'invalid expected result tree',
   );
   invariant(
-    Array.isArray(overlay.sourceCommits) &&
-      overlay.sourceCommits.length === 6 &&
-      overlay.sourceCommits.every((value) => SHA_PATTERN.test(value)),
-    'overlay must preserve the six source commit ids',
+    !Object.hasOwn(overlay, 'sourceCommits'),
+    'raw local commit ids are not reproducible overlay provenance',
+  );
+  invariant(
+    overlay.historicalProvenance?.classification ===
+      'local_unpublished_history' &&
+      overlay.historicalProvenance?.changeCount === 6 &&
+      overlay.historicalProvenance?.remoteReachability === 'not_asserted' &&
+      overlay.historicalProvenance?.authoritativeForReplay === false &&
+      overlay.historicalProvenance?.rawCommitIdsIncluded === false,
+    'historical provenance must remain sanitized and non-authoritative',
   );
   invariant(
     Array.isArray(overlay.touchedPaths) && overlay.touchedPaths.length > 0,
@@ -125,11 +144,35 @@ export function verifyStaticContract({
       ),
     'overlay refinement must document its three in-scope files',
   );
+  invariant(
+    typeof overlay.securityRepair?.purpose === 'string' &&
+      overlay.securityRepair.purpose.length > 0 &&
+      Array.isArray(overlay.securityRepair.files) &&
+      overlay.securityRepair.files.length === 3 &&
+      overlay.securityRepair.files.every((value) =>
+        overlay.touchedPaths.includes(value),
+      ),
+    'overlay security repair must document its three in-scope files',
+  );
+  invariant(
+    typeof overlay.compatibilityRepair?.purpose === 'string' &&
+      overlay.compatibilityRepair.purpose.length > 0 &&
+      Array.isArray(overlay.compatibilityRepair.files) &&
+      overlay.compatibilityRepair.files.length === 5 &&
+      overlay.compatibilityRepair.files.every((value) =>
+        overlay.touchedPaths.includes(value),
+      ),
+    'overlay compatibility repair must document its five in-scope files',
+  );
 
   const overlayPath = safeRelativePath(root, overlay.path, 'overlay path');
   invariant(statSync(overlayPath).isFile(), 'overlay path is not a file');
   const actualPatch = patchText ?? readFileSync(overlayPath, 'utf8');
   invariant(sha256(actualPatch) === overlay.sha256, 'overlay digest mismatch');
+  invariant(
+    stablePatchId(actualPatch) === overlay.patchId,
+    'overlay patch id mismatch',
+  );
   invariant(
     !/(?:^|\n)(?:new file mode|deleted file mode|rename from|rename to|GIT binary patch)/u.test(
       actualPatch,
@@ -174,6 +217,7 @@ export function verifyStaticContract({
   return {
     overlayPath,
     overlaySha256: overlay.sha256,
+    overlayPatchId: overlay.patchId,
     touchedPaths: actualTouched,
   };
 }
@@ -245,6 +289,21 @@ export function verifyPatchedEngineMarkers(engineRoot) {
     engineRoot,
     'src/channels/telegram.ts',
     'texts (sends need your yes)',
+  );
+  requireMarker(
+    engineRoot,
+    'src/cognitive-runtime-completion.ts',
+    'deniedTextStyle',
+  );
+  requireMarker(
+    engineRoot,
+    'src/cognitive-runtime-completion.test.ts',
+    'never restores a denied false completion claim',
+  );
+  requireMarker(
+    engineRoot,
+    'src/formatting.test.ts',
+    'alias for the default assistant trigger',
   );
   requireMarker(engineRoot, 'src/config.ts', 'TELEGRAM_NATURAL_UX');
 }
