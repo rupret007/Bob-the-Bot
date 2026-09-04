@@ -11,6 +11,7 @@ labels: [coord]
 - branch:
 - pr:
 - claimed_scope:
+- completed_scope:
 - holds:
 - evidence:
 - next_action:
