@@ -87,3 +87,10 @@ the current live-board receipt.
 ## Owner gates
 
 Jeff still owns feel, send, spend, live Cisco, Che pull, Logic keys/WAVs, and merge when not leftover-green. Karen remains leftover + security ship-gate. Andrea send fence is unchanged.
+
+## OpenClaw consolidation fences
+
+- Consolidation default: implement with native Cloud Agents first.
+- Fallback path: use the Integration CLI only when native Cloud Agent coverage is not sufficient.
+- Bob boundary: do not port `andrea_sync` into Bob-the-Bot.
+- Andrea boundary: Andrea NanoBot keeps the bridge responsibilities.
