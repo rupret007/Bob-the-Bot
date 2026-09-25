@@ -1,7 +1,7 @@
 # WebJam + Logic Pro Companion — Excellence Research (OUTSIDE THE BOX)
 
 **For:** Jeff Story · **Date:** 2026-09-22 ~10:40 PM CT  
-**Status:** RESEARCH ONLY — no PRs, no `rupret007/webjam` product code changes  
+**Status:** RESEARCH ONLY — no PRs, no `rupret007/webjam` product code changes. P0–P3 below are a proposed backlog, not Jeff’s selection.  
 **Builds on:** `webjam-logic-pro-companion-20260922.md`, `webjam-logic-companion-BUILD-BRIEF.md`, Gemini/MiniMax critiques, prior Logic/Bob handoff research  
 **Planning note:** Use highest-tier reasoning for planning/review. Implementation later may use cheaper models once acceptance tests are locked.
 

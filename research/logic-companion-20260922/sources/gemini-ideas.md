@@ -1,3 +1,5 @@
+> **Partial capture.** The text below claims 12 ideas and then a latency list. The file stops mid-sentence in Idea 4. Those 12 ideas and the failure-mode list are not here. Do not complete them from memory.
+
 Here are 12 excellence ideas for a WebJam desktop band collab and Logic Pro companion, followed by the top 3 latency/echo failure modes.
 
 ## Idea 1: Logic Pro Session-Aware Sync

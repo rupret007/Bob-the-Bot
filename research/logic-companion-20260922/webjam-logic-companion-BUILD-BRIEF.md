@@ -1,5 +1,7 @@
 # WebJam ↔ Logic Companion — Build Brief
-Date: 2026-09-22 ~10:34 PM CT · Research → build plan (no repo patches until #149 green + lease free)
+Date: 2026-09-22 ~10:34 PM CT · Research → build plan (no repo patches until the live lease is free)
+
+> **Snapshot, not the live board.** Written 2026-09-22. Sentences below about who holds #149, and about #149 being red or green, are that night’s note. The open `coord:` issue is the lease. Jeff has not said this plan is a quality product. Do not start Logic code from this file alone.
 
 ## Goals
 1. Logic-ready handoff: stems (WAV/AIFF) + MIDI + tempo/map notes into a droppable folder.

@@ -1,5 +1,7 @@
 # MiniMax excellence (trimmed CoT)
 
+> **Partial capture.** Trimmed chain-of-thought, not a finished memo. The body starts mid-word. Numbering skips. The synthesis adopted only items it names. Do not backfill missing bullets.
+
 ording in Logic). The companion never relies on network for audio. WebJam is a control plane, not a media plane. Stems upload after. If WebJam dies, the take survives.
 
 4. **Safe-Take Recovery Sentinel**: A lightweight Logic AUv3 plug-in that pings CoreHeart's transport state over localhost OSC. If the plug-in detects Logic freeze or plug-in silence for N seconds, it auto-saves a "last good" take marker and broadcasts a "Logic is dying" warning to other session members so they can pause.

@@ -3,7 +3,9 @@
 **For:** Jeff Story · **Date:** 2026-09-22 ~10:40 PM CT  
 **Status:** SYNTHESIS ONLY — no PRs, no `rupret007/webjam` product code, no Logic implementation  
 **Primary spine:** `webjam-logic-EXCELLENCE-RESEARCH.md`  
-**This file:** one-page executive cut + Adopt/Defer/Kill + locked P0/P1/P2 + BUILD GATE
+**This file:** one-page executive cut + Adopt/Defer/Kill + proposed P0/P1/P2 cut + BUILD GATE
+
+The P0/P1/P2 cut is a research proposal. Jeff has not approved it. “Locked” elsewhere in this folder means “do not reopen inside the research,” not “Jeff signed.”
 
 ---
 

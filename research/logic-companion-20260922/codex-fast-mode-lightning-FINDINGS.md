@@ -3,6 +3,8 @@
 **Date:** 2026-09-22 ~10:45 PM CT  
 **Method:** filesystem + OCR/AX dumps + memory + skills + voice transcript. No guessing beyond labeled evidence.
 
+**In this pull request:** only [`sources/chatgpt-fast-mode-ax-excerpt.txt`](sources/chatgpt-fast-mode-ax-excerpt.txt). The dump paths named below were not copied into the repo. This note does not confirm that a lightning-bolt glyph is Fast mode.
+
 ## 1) Lightning bolt toggle — what was found
 
 ### Found (concrete)
