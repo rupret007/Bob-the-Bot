@@ -116,6 +116,9 @@ Pinned heads only. This index does not rewrite those files.
   The wrapper has no dry-run of its own.
   A missing or blank `BOB_OPENCLAW_INTEGRATION_ROOT` prints to stderr and
   returns exit status 2. The wrapper does not load dotenv files.
+  If that root is set but `scripts/cursor_openclaw.py` is not a file there,
+  the wrapper prints `Could not find scripts/cursor_openclaw.py under
+  BOB_OPENCLAW_INTEGRATION_ROOT.` to stderr and also returns exit status 2.
   [docs/openclaw/README.md](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/docs/openclaw/README.md)
   calls that folder the source of truth for Bob-side OpenClaw policy. This
   index keeps `README.md` and `COORDINATION.md` as the entry points while
@@ -142,6 +145,8 @@ Pinned heads only. This index does not rewrite those files.
   The #27 wrapper does not read `CURSOR_API_KEY`.
   The #28 CLI does not read `BOB_OPENCLAW_INTEGRATION_ROOT`.
   `create-agent --dry-run` and `followup --dry-run` return `would_send: False` and do not POST.
+  `stop-agent` and `delete-agent` have no `--dry-run`. `stop-agent` POSTs
+  `/v0/agents/{id}/stop`. `delete-agent` DELETEs `/v0/agents/{id}`.
   `stop-all-jobs` stays dry-run unless `--yes` is present (`dry_run = bool(args.dry_run) or not bool(args.yes)`).
   If that scan hits `--max-pages` before the cursor ends, `stop-all-jobs`
   returns HTTP-style status `409` and does not POST stops.
@@ -198,6 +203,21 @@ WebJam dual-lease or `gemini` / `minimax`.
 `none | codex | claude | gemini | minimax | grok` and adds a
 "Conductor standing order (multi-LLM)" section that says the machine
 audit emits `webjam_dual_active_lease`.
+That section does not name `dual_active_lease`. The #25 standing-order
+doc names both emit codes.
+#25's COORDINATION.md also changes the intro to Codex, Claude, Gemini,
+MiniMax, and Grok (this checkout still says Codex, Grok Bot, and Claude),
+replaces the dashboard paint tiles `Codex lease` / `Grok lease` /
+`Claude lease` with `(for Codex/Claude/Gemini/MiniMax/Grok)`, and adds
+"For `rupret007/webjam`, this is absolute." to the must-read step.
+This checkout still uses the named tiles and has no WebJam-absolute clause.
+#25's README.md only adds a pointer to `docs/conductor-standing-order.md`.
+This checkout's README does not link that file.
+#25's coord issue template adds
+"Standing order: run one active lease per repo, and never dual-lease
+`rupret007/webjam`." and "Allowed `agent` values: `none`, `codex`,
+`claude`, `gemini`, `minimax`, `grok`."
+This checkout's template has neither line.
 
 ## Backlinks
 

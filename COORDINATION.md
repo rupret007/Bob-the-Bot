@@ -121,6 +121,7 @@ not lift owner gates, and does not treat #27/#28 as a stack.
   Do not claim WebJam, Show Night, or Andrea for this map.
 - The conductor standing order stays on unmerged [draft #25](https://github.com/rupret007/Bob-the-Bot/pull/25) `3939c3abf9a65225d9c40caa4737e23c1b85bd0c`. This PR does not stack it.
 - #25 also edits `tools/coord_audit.py` to accept `gemini`/`minimax` and emit `dual_active_lease` / `webjam_dual_active_lease`. This checkout's auditor does not.
+- #25's COORDINATION/README/template also rewrite the dashboard paint line, add the WebJam-absolute must-read, and write the five-agent template allowlist. This checkout's protocol text does not.
 - Rank 1 labels (silent specialists, Band) are this index's target. They are not written on the #25 standing order.
 - Andrea bridge: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
 - docs + wrapper: [draft #27](https://github.com/rupret007/Bob-the-Bot/pull/27) `d200c1d7b648fae65dc090609f6c2c3d0cd2b13f`

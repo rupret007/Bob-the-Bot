@@ -92,7 +92,9 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("3939c3abf9a65225d9c40caa4737e23c1b85bd0c", readme)
         self.assertIn("This checkout's", readme)
         self.assertIn("auditor does not", readme)
+        self.assertIn("This checkout's protocol text does not", readme)
         self.assertIn("are not written on the #25 standing order", readme)
+        self.assertNotIn("docs/conductor-standing-order.md", readme)
         self.assertIn("- agent: none | codex | grok | claude", coordination)
         self.assertIsNone(re.search(r"(?m)^- fences:", readme))
         self.assertIn("not treat #27/#28 as a stack", coordination)
@@ -103,9 +105,12 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("3939c3abf9a65225d9c40caa4737e23c1b85bd0c", coordination)
         self.assertIn("This PR does not stack it.", coordination)
         self.assertIn("This checkout's auditor does not.", coordination)
+        self.assertIn("This checkout's protocol text does not.", coordination)
         self.assertIn("dual_active_lease", coordination)
         self.assertIn("webjam_dual_active_lease", coordination)
         self.assertIn("are not written on the #25 standing order", coordination)
+        self.assertIn("`Codex lease` / `Grok lease` / `Claude lease`", coordination)
+        self.assertNotIn("this is absolute", coordination)
         self.assertIsNone(re.search(r"(?m)^- fences:", coordination))
         for draft in DRAFTS:
             self.assertIn(draft["url"], readme)
@@ -172,6 +177,14 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("returns exit status 2.", index)
         self.assertIn("The wrapper does not load dotenv files.", index)
         self.assertIn(
+            "If that root is set but `scripts/cursor_openclaw.py` is not a file there,",
+            index,
+        )
+        self.assertIn(
+            "Could not find scripts/cursor_openclaw.py under",
+            index,
+        )
+        self.assertIn(
             "The #28 CLI does not read `BOB_OPENCLAW_INTEGRATION_ROOT`.",
             index,
         )
@@ -179,6 +192,9 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
             "`create-agent --dry-run` and `followup --dry-run` return `would_send: False` and do not POST.",
             index,
         )
+        self.assertIn("`stop-agent` and `delete-agent` have no `--dry-run`.", index)
+        self.assertIn("`stop-agent` POSTs", index)
+        self.assertIn("`delete-agent` DELETEs", index)
         self.assertIn(
             "`stop-all-jobs` stays dry-run unless `--yes` is present (`dry_run = bool(args.dry_run) or not bool(args.yes)`).",
             index,
@@ -232,6 +248,21 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
             "They are not written on the #25 standing order.",
             index,
         )
+        self.assertIn("That section does not name `dual_active_lease`.", index)
+        self.assertIn("The #25 standing-order", index)
+        self.assertIn("doc names both emit codes.", index)
+        self.assertIn("Codex, Grok Bot, and Claude", index)
+        self.assertIn("(for Codex/Claude/Gemini/MiniMax/Grok)", index)
+        self.assertIn("this is absolute.", index)
+        self.assertIn("This checkout still uses the named tiles", index)
+        self.assertIn("has no WebJam-absolute clause.", index)
+        self.assertIn(
+            "only adds a pointer to `docs/conductor-standing-order.md`.",
+            index,
+        )
+        self.assertIn("This checkout's README does not link that file.", index)
+        self.assertIn("never dual-lease", index)
+        self.assertIn("This checkout's template has neither line.", index)
         self.assertIn("does not mention Band", index)
         self.assertIn("Thin Front Door + Silent Parallel Specialists", index)
         self.assertIn(_blob(DRAFTS[1]["sha"], "README.md"), index)
@@ -266,6 +297,8 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertNotIn("gemini", template)
         self.assertNotIn("minimax", template)
         self.assertNotIn("webjam", template.casefold())
+        self.assertNotIn("never dual-lease", template)
+        self.assertNotIn("Allowed `agent` values", template)
 
     def test_index_stays_free_of_secrets_and_local_paths(self) -> None:
         for path in (INDEX, README, COORDINATION):
