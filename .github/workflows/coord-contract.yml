@@ -6,6 +6,8 @@ on:
       - ".github/ISSUE_TEMPLATE/coord.md"
       - ".github/workflows/coord-contract.yml"
       - "COORDINATION.md"
+      - "README.md"
+      - "docs/**"
       - "tools/**"
       - "tests/**"
   push:
@@ -14,6 +16,8 @@ on:
       - ".github/ISSUE_TEMPLATE/coord.md"
       - ".github/workflows/coord-contract.yml"
       - "COORDINATION.md"
+      - "README.md"
+      - "docs/**"
       - "tools/**"
       - "tests/**"
 
