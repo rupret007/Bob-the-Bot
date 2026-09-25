@@ -91,12 +91,13 @@ Jeff still owns feel, send, spend, live Cisco, Che pull, Logic keys/WAVs, and me
 ## OpenClaw operator index
 
 Operator map: [docs/openclaw-operator-index.md](docs/openclaw-operator-index.md).
-That file links README and this protocol across three **unmerged** drafts. It
-does not merge them and does not lift owner gates.
+That file links README and this protocol across three **unmerged** drafts
+with exact SHAs and file-level blob links. It does not merge them, does
+not lift owner gates, and does not treat #27/#28 as a stack.
 
 - Native Cloud Agents first. `Cursor-OpenClaw-Integration` is **legacy**.
 - Andrea, gateway, and secrets stay out of Bob-the-Bot.
-- fences: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26)
-- docs: [draft #27](https://github.com/rupret007/Bob-the-Bot/pull/27)
-- CLI vendor: [draft #28](https://github.com/rupret007/Bob-the-Bot/pull/28)
+- fences: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
+- docs + wrapper: [draft #27](https://github.com/rupret007/Bob-the-Bot/pull/27) `d200c1d7b648fae65dc090609f6c2c3d0cd2b13f`
+- CLI vendor: [draft #28](https://github.com/rupret007/Bob-the-Bot/pull/28) `fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066`
 
