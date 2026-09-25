@@ -119,11 +119,11 @@ Pinned heads only. This index does not rewrite those files.
   [cursor_api_common.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tools/openclaw/cursor_api_common.py)
   and
   [env_loader.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tools/openclaw/env_loader.py).
-  When that unmerged CLI starts, `cursor_openclaw.py` loads the repo-root
-  `.env` and the cwd `.env` through `env_loader.merge_dotenv_paths`
-  (`override=False`). The repo-root path is `_SCRIPT_DIR.parent.parent / ".env"`
-  (`_SCRIPT_DIR` is the script directory, `tools/openclaw` on this head). The
-  cwd path is `Path.cwd() / ".env"`. A path that is not a file is skipped.
+  When that unmerged CLI starts, `cursor_openclaw.py` loads the repo-root `.env`
+  and the cwd `.env` through `env_loader.merge_dotenv_paths` (`override=False`).
+  The repo-root path is `_SCRIPT_DIR.parent.parent / ".env"`
+  (`_SCRIPT_DIR` is the script directory, `tools/openclaw` on this head).
+  The cwd path is `Path.cwd() / ".env"`. A path that is not a file is skipped.
   Keys already in the environment stay put, so the repo-root file wins over
   the cwd file when both set the same key.
   Credential values, including any `CURSOR_API_KEY` value, stay out of this
