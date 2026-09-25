@@ -19,3 +19,5 @@ labels: [coord]
 - lease_until:
 
 Comments are delta-only. GitHub is authoritative. The dashboard only presents this state.
+Standing order: run one active lease per repo, and never dual-lease `rupret007/webjam`.
+Allowed `agent` values: `none`, `codex`, `claude`, `gemini`, `minimax`, `grok`.
