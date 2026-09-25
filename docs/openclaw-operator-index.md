@@ -177,6 +177,40 @@ cross-link surface for those three drafts.
    either CLI as new product and do not stack them.
 4. Read [Fence scope by draft](#fence-scope-by-draft). Gateway and secrets fences are written on the #27 and #28 heads. #26 stops at the Andrea bridge. Stay on the Stack Ops lane.
 
+## Consolidation state
+
+Recorded here so the OpenClaw fence scope reflects the live org structure.
+
+### Agent allowlist
+
+This checkout allows only `none`, `codex`, `grok`, and `claude` in
+`tools/coord_audit.py`. Lane (`gemini`) and MiniMax (`minimax`) appear
+only on unmerged [#25](https://github.com/rupret007/Bob-the-Bot/pull/25).
+That PR is parked; do not treat those agents as available until #25 lands.
+
+### Skills ownership
+
+Bob-the-Bot owns the skills surface for the coordination protocol.
+Skill files, policy docs, and operator guides live here. Do not move
+them to Andrea, Integration, or external repositories without explicit
+handoff. Each skill remains a leftover until Jeff confirms it.
+
+### Peer boundaries
+
+Karen and Andrea operate as peers, not subordinate repos:
+
+- **Karen**: leftover + security ship-gate. Ships leftovers and reviews
+  security-gated changes. Does not own OpenClaw CLI vendor or skills.
+- **Andrea**: send fence unchanged. `andrea_sync` and BlueBubbles bridge
+  stay in Andrea_NanoBot. Andrea does not port OpenClaw fallback stories.
+- **Bob**: protocol, coordination, skills, and operator index. Claims
+  `coord: rupret007/Bob-the-Bot` for Stack Ops. Does not claim Andrea,
+  WebJam, or Show Night leases for this map.
+
+Peer coordination uses the same `coord:` issue protocol. A lease on one
+repo does not extend to another. Cross-repo work requires separate
+claims or explicit handoff.
+
 ## Out of scope here
 
 - Merging or rebasing #26, #27, or #28
