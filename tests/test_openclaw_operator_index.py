@@ -118,6 +118,15 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("does not vendor that CLI", index)
         self.assertIn("scripts/cursor_openclaw.py", index)
         self.assertIn("BOB_OPENCLAW_INTEGRATION_ROOT", index)
+        self.assertIn("command check reads `sys.argv[1:]`", index)
+        self.assertIn("An empty argument list is rejected.", index)
+        self.assertIn("first of those tokens must be in `ALLOWED_COMMANDS`", index)
+        self.assertIn("The full argument list is forwarded unchanged.", index)
+        self.assertIn("`artifact-index` is in that allowlist.", index)
+        self.assertIn(
+            "does not register an `artifact-index` subcommand",
+            index,
+        )
         self.assertIsNone(
             re.search(r"does not contain\s+`cursor_openclaw\.py`", index),
         )

@@ -106,6 +106,10 @@ Pinned heads only. This index does not rewrite those files.
   [tools/openclaw_cli_fallback.py](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/tools/openclaw_cli_fallback.py)
   does not vendor that CLI. It shells out to `scripts/cursor_openclaw.py`
   inside the checkout named by `BOB_OPENCLAW_INTEGRATION_ROOT`.
+  The command check reads `sys.argv[1:]`. An empty argument list is rejected.
+  Otherwise the first of those tokens must be in `ALLOWED_COMMANDS`.
+  The full argument list is forwarded unchanged. `artifact-index` is in that allowlist.
+  The #28 vendored CLI does not register an `artifact-index` subcommand.
   [docs/openclaw/README.md](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/docs/openclaw/README.md)
   calls that folder the source of truth for Bob-side OpenClaw policy. This
   index keeps `README.md` and `COORDINATION.md` as the entry points while
