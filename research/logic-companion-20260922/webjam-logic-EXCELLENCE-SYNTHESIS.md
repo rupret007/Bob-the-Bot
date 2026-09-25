@@ -17,7 +17,7 @@ Excellence is **not** “WebJam exports a WAV.” Excellence is Jeff moving thro
 
 | Source | Path / role |
 |---|---|
-| **Excellence research (primary)** | `/workspace/research/webjam-logic-EXCELLENCE-RESEARCH.md` — journeys, edge cases, latency matrix, friction map, P0–P3, §7 tests |
+| **Excellence research (primary)** | `webjam-logic-EXCELLENCE-RESEARCH.md` — journeys, edge cases, latency matrix, friction map, P0–P3, §7 tests |
 | **Prior companion research** | `webjam-logic-pro-companion-20260922.md` — APIs, MCU/MMC/IAC, mute SM, phasing |
 | **Build brief** | `webjam-logic-companion-BUILD-BRIEF.md` — goals, non-goals, PR strategy |
 | **Gemini ideas** | `sources/gemini-ideas.md` (truncated after Idea 4) — session sync, MIDI re-voice, plugin control, visual latency nudge |

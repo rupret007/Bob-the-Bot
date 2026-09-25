@@ -581,8 +581,8 @@ Community MCU map to verify (ch1 note-on vel 127/0): Play≈94, Stop≈93, Recor
 
 ## Appendix C — Sources & prior art
 
-- Prior: `/workspace/research/webjam-logic-pro-companion-20260922.md`, `webjam-logic-companion-BUILD-BRIEF.md`, critiques Gemini/MiniMax  
-- Prior: `/workspace/logic-integration-research-aug22.md` (file handoff forever-primary)  
+- Prior (this repo): `webjam-logic-pro-companion-20260922.md`, `webjam-logic-companion-BUILD-BRIEF.md`, critiques Gemini/MiniMax  
+- Prior (external, not in this repo): Aug 2022 logic-integration-research (file handoff forever-primary)  
 - Apple: Logic monitoring latency, metronome/count-in, control surfaces, IAC, Ableton Link, OSC paths  
 - BlackHole Aggregate wiki; Apple Community drift correction guidance  
 - MCU maps: EMATech/TouchMCU docs; rubenknol/logic-pro-mcp IAC MCU Cmd/Fb pattern  
