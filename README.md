@@ -17,7 +17,7 @@ and secrets fences are written on the #27 and #28 heads. This OpenClaw map
 is the Stack Ops lane. WebJam and Show Night stay on their own coord issues.
 
 - [OpenClaw operator index](docs/openclaw-operator-index.md) (exact SHAs + file links)
-- fences: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
+- Andrea bridge: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
 - docs + wrapper: [draft #27](https://github.com/rupret007/Bob-the-Bot/pull/27) `d200c1d7b648fae65dc090609f6c2c3d0cd2b13f`
 - CLI vendor: [draft #28](https://github.com/rupret007/Bob-the-Bot/pull/28) `fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066`
 

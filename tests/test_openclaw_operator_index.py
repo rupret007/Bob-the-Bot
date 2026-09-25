@@ -28,6 +28,7 @@ DRAFTS = (
             "docs/openclaw/hard-fences.md",
             "docs/openclaw/not-moved.md",
             "tools/openclaw_cli_fallback.py",
+            "tests/test_openclaw_cli_fallback.py",
         ),
     },
     {
@@ -41,6 +42,8 @@ DRAFTS = (
             "tools/openclaw/cursor_openclaw.py",
             "tools/openclaw/cursor_api_common.py",
             "tools/openclaw/env_loader.py",
+            "tools/openclaw/__init__.py",
+            "tests/test_openclaw_cli.py",
         ),
     },
 )
@@ -74,9 +77,13 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("not a stack", readme)
         self.assertIn("stops at the Andrea bridge", readme)
         self.assertIn("Stack Ops lane", readme)
+        self.assertIn("- Andrea bridge: [draft #26]", readme)
+        self.assertIsNone(re.search(r"(?m)^- fences:", readme))
         self.assertIn("not treat #27/#28 as a stack", coordination)
         self.assertIn("stops at the Andrea bridge", coordination)
         self.assertIn("Stack Ops lane", coordination)
+        self.assertIn("- Andrea bridge: [draft #26]", coordination)
+        self.assertIsNone(re.search(r"(?m)^- fences:", coordination))
         for draft in DRAFTS:
             self.assertIn(draft["url"], readme)
             self.assertIn(draft["url"], coordination)
@@ -97,6 +104,15 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("only hosted", index)
         self.assertIn("cross-link surface", index)
         self.assertIn("stops at the Andrea bridge", index)
+        self.assertIn("| Andrea bridge |", index)
+        self.assertIn("### #26 Andrea bridge", index)
+        self.assertIsNone(re.search(r"\| fences \|", index))
+        self.assertIn("repo-root `.env`", index)
+        self.assertIn("cwd `.env`", index)
+        self.assertIn("_SCRIPT_DIR.parent.parent", index)
+        self.assertIn('Path.cwd() / ".env"', index)
+        self.assertIn("override=False", index)
+        self.assertNotIn("reads a local dotenv file", index)
         self.assertIn("Gateway and secrets fences are written on the #27 and #28 heads", index)
         self.assertIn("leaves that source-of-truth claim on the #27 head", index)
         self.assertIn("does not vendor that CLI", index)

@@ -29,7 +29,7 @@ must not be used as a vehicle to squash them.
 
 | Draft | Lane | Branch | Exact SHA | Status on this index |
 | --- | --- | --- | --- | --- |
-| [#26](https://github.com/rupret007/Bob-the-Bot/pull/26) | fences | `cursor/openclaw-consolidation-fences-f6bd` | `b1eec45a2e1693656520412ebfce52157706f353` | Linked only |
+| [#26](https://github.com/rupret007/Bob-the-Bot/pull/26) | Andrea bridge | `cursor/openclaw-consolidation-fences-f6bd` | `b1eec45a2e1693656520412ebfce52157706f353` | Linked only |
 | [#27](https://github.com/rupret007/Bob-the-Bot/pull/27) | docs + wrapper | `cursor/openclaw-operator-docs-7588` | `d200c1d7b648fae65dc090609f6c2c3d0cd2b13f` | Linked only |
 | [#28](https://github.com/rupret007/Bob-the-Bot/pull/28) | CLI vendor | `cursor/vendor-openclaw-cli-6baa` | `fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066` | Linked only |
 
@@ -41,10 +41,11 @@ heads.
 Blob links are pinned to the exact SHAs above. They are read-only pointers.
 This checkout does not contain those files.
 
-### #26 fences
+### #26 Andrea bridge
 
 [#26](https://github.com/rupret007/Bob-the-Bot/pull/26) only adds a
-COORDINATION section. Read it first for the native-first / Andrea
+COORDINATION section. Its short lane is the Andrea bridge, not the
+gateway or secrets fences. Read it first for the native-first / Andrea
 keep-bridge fence:
 
 - [COORDINATION.md](https://github.com/rupret007/Bob-the-Bot/blob/b1eec45a2e1693656520412ebfce52157706f353/COORDINATION.md) (`OpenClaw consolidation fences`)
@@ -60,6 +61,7 @@ a vendored CLI; it expects an operator-provided Integration checkout.
 - [docs/openclaw/hard-fences.md](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/docs/openclaw/hard-fences.md)
 - [docs/openclaw/not-moved.md](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/docs/openclaw/not-moved.md)
 - [tools/openclaw_cli_fallback.py](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/tools/openclaw_cli_fallback.py)
+- [tests/test_openclaw_cli_fallback.py](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/tests/test_openclaw_cli_fallback.py)
 
 ### #28 CLI vendor
 
@@ -71,6 +73,8 @@ fallback CLI in-repo. That is a different leftover from the #27 wrapper.
 - [tools/openclaw/cursor_openclaw.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tools/openclaw/cursor_openclaw.py)
 - [tools/openclaw/cursor_api_common.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tools/openclaw/cursor_api_common.py)
 - [tools/openclaw/env_loader.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tools/openclaw/env_loader.py)
+- [tools/openclaw/__init__.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tools/openclaw/__init__.py) (package marker only)
+- [tests/test_openclaw_cli.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tests/test_openclaw_cli.py)
 
 ## Overlap / do-not-stack
 
@@ -115,7 +119,13 @@ Pinned heads only. This index does not rewrite those files.
   [cursor_api_common.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tools/openclaw/cursor_api_common.py)
   and
   [env_loader.py](https://github.com/rupret007/Bob-the-Bot/blob/fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066/tools/openclaw/env_loader.py).
-  `env_loader.py` reads a local dotenv file when that unmerged CLI starts.
+  When that unmerged CLI starts, `cursor_openclaw.py` loads the repo-root
+  `.env` and the cwd `.env` through `env_loader.merge_dotenv_paths`
+  (`override=False`). The repo-root path is `_SCRIPT_DIR.parent.parent / ".env"`
+  (`_SCRIPT_DIR` is the script directory, `tools/openclaw` on this head). The
+  cwd path is `Path.cwd() / ".env"`. A path that is not a file is skipped.
+  Keys already in the environment stay put, so the repo-root file wins over
+  the cwd file when both set the same key.
   Credential values, including any `CURSOR_API_KEY` value, stay out of this
   repository and out of coord comments.
 
