@@ -114,6 +114,8 @@ Pinned heads only. This index does not rewrite those files.
   The #28 vendored CLI does not register an `artifact-index` subcommand.
   A sole `--version` or `-V` is rejected because those tokens are not in `ALLOWED_COMMANDS`.
   The wrapper has no dry-run of its own.
+  A missing or blank `BOB_OPENCLAW_INTEGRATION_ROOT` prints to stderr and
+  returns exit status 2. The wrapper does not load dotenv files.
   [docs/openclaw/README.md](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/docs/openclaw/README.md)
   calls that folder the source of truth for Bob-side OpenClaw policy. This
   index keeps `README.md` and `COORDINATION.md` as the entry points while
@@ -138,10 +140,15 @@ Pinned heads only. This index does not rewrite those files.
   `diagnose` still runs without that key.
   A sole `--version` or `-V` returns before the key check.
   The #27 wrapper does not read `CURSOR_API_KEY`.
+  The #28 CLI does not read `BOB_OPENCLAW_INTEGRATION_ROOT`.
   `create-agent --dry-run` and `followup --dry-run` return `would_send: False` and do not POST.
   `stop-all-jobs` stays dry-run unless `--yes` is present (`dry_run = bool(args.dry_run) or not bool(args.yes)`).
-  Credential values, including any `CURSOR_API_KEY` value, stay out of this
-  repository and out of coord comments.
+  If that scan hits `--max-pages` before the cursor ends, `stop-all-jobs`
+  returns HTTP-style status `409` and does not POST stops.
+  `diagnose --show-key` previews the first two and last two characters of
+  `CURSOR_API_KEY` when that value is longer than 8 characters; otherwise
+  the preview is `***`. Credential values, including any `CURSOR_API_KEY`
+  value, stay out of this repository and out of coord comments.
 
 ## Stack Ops lane
 
@@ -159,7 +166,38 @@ This PR does not merge, rebase, or vendor that tree.
 This checkout still allows only `none`, `codex`, `grok`, and `claude` in `tools/coord_audit.py`.
 `gemini` and `minimax` appear only on that unmerged #25 head.
 
+#25 writes more than the standing-order doc. Blob links are pinned to
+`3939c3abf9a65225d9c40caa4737e23c1b85bd0c`. This checkout does not contain
+those edits:
+
 - [docs/conductor-standing-order.md](https://github.com/rupret007/Bob-the-Bot/blob/3939c3abf9a65225d9c40caa4737e23c1b85bd0c/docs/conductor-standing-order.md)
+- [tools/coord_audit.py](https://github.com/rupret007/Bob-the-Bot/blob/3939c3abf9a65225d9c40caa4737e23c1b85bd0c/tools/coord_audit.py)
+- [tests/test_coord_audit.py](https://github.com/rupret007/Bob-the-Bot/blob/3939c3abf9a65225d9c40caa4737e23c1b85bd0c/tests/test_coord_audit.py)
+- [COORDINATION.md](https://github.com/rupret007/Bob-the-Bot/blob/3939c3abf9a65225d9c40caa4737e23c1b85bd0c/COORDINATION.md)
+- [README.md](https://github.com/rupret007/Bob-the-Bot/blob/3939c3abf9a65225d9c40caa4737e23c1b85bd0c/README.md)
+- [.github/ISSUE_TEMPLATE/coord.md](https://github.com/rupret007/Bob-the-Bot/blob/3939c3abf9a65225d9c40caa4737e23c1b85bd0c/.github/ISSUE_TEMPLATE/coord.md)
+
+On that unmerged head, `tools/coord_audit.py` defines
+`CONDUCTOR_AGENTS = frozenset({"codex", "claude", "gemini", "minimax", "grok"})`,
+`ALLOWED_AGENTS = frozenset({"none"}) | CONDUCTOR_AGENTS`, and
+`WEBJAM_REPO = "rupret007/webjam"`. It emits `dual_active_lease` when two
+live active leases claim the same repo, and emits `webjam_dual_active_lease`
+in addition when that repo is `rupret007/webjam`.
+
+This checkout's `tools/coord_audit.py` still has
+`ALLOWED_AGENTS = frozenset({"none", "codex", "grok", "claude"})`.
+It does not define `CONDUCTOR_AGENTS` or `WEBJAM_REPO`.
+It does not emit `dual_active_lease` or `webjam_dual_active_lease`.
+
+This checkout's COORDINATION.md lease template still lists
+`none | codex | grok | claude`. The dashboard paint line still names
+Codex / Grok / Claude only. The coord issue template does not mention
+WebJam dual-lease or `gemini` / `minimax`.
+
+#25's COORDINATION.md changes the agent line to
+`none | codex | claude | gemini | minimax | grok` and adds a
+"Conductor standing order (multi-LLM)" section that says the machine
+audit emits `webjam_dual_active_lease`.
 
 ## Backlinks
 
@@ -208,6 +246,12 @@ Current state: this checkout allows only `none`, `codex`, `grok`, and
 `claude` in `tools/coord_audit.py`. The silent specialists (Lane/MiniMax)
 appear only on unmerged #25. Until #25 lands, the thin-front-door pattern
 is incomplete. Codex, Grok, and Claude are the active conductor agents.
+
+Rank 1 labels on this index (Thin Front Door, Silent Parallel Specialists,
+Band on-demand) are this map's target pattern. They are not written on the #25 standing order.
+That file lists five conductor agents as parallel model lanes with one
+live active lease per repo and WebJam as single-lane. It does not call
+Lane/MiniMax silent and does not mention Band.
 
 ### Agent allowlist
 

@@ -47,6 +47,15 @@ DRAFTS = (
         ),
     },
 )
+CONDUCTOR_SHA = "3939c3abf9a65225d9c40caa4737e23c1b85bd0c"
+CONDUCTOR_FILES = (
+    "docs/conductor-standing-order.md",
+    "tools/coord_audit.py",
+    "tests/test_coord_audit.py",
+    "COORDINATION.md",
+    "README.md",
+    ".github/ISSUE_TEMPLATE/coord.md",
+)
 ABSENT_FROM_THIS_CHECKOUT = (
     ROOT / "docs" / "openclaw",
     ROOT / "docs" / "conductor-standing-order.md",
@@ -81,6 +90,10 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("- Andrea bridge: [draft #26]", readme)
         self.assertIn("coord: rupret007/Bob-the-Bot", readme)
         self.assertIn("3939c3abf9a65225d9c40caa4737e23c1b85bd0c", readme)
+        self.assertIn("This checkout's", readme)
+        self.assertIn("auditor does not", readme)
+        self.assertIn("are not written on the #25 standing order", readme)
+        self.assertIn("- agent: none | codex | grok | claude", coordination)
         self.assertIsNone(re.search(r"(?m)^- fences:", readme))
         self.assertIn("not treat #27/#28 as a stack", coordination)
         self.assertIn("stops at the Andrea bridge", coordination)
@@ -89,6 +102,10 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/22", coordination)
         self.assertIn("3939c3abf9a65225d9c40caa4737e23c1b85bd0c", coordination)
         self.assertIn("This PR does not stack it.", coordination)
+        self.assertIn("This checkout's auditor does not.", coordination)
+        self.assertIn("dual_active_lease", coordination)
+        self.assertIn("webjam_dual_active_lease", coordination)
+        self.assertIn("are not written on the #25 standing order", coordination)
         self.assertIsNone(re.search(r"(?m)^- fences:", coordination))
         for draft in DRAFTS:
             self.assertIn(draft["url"], readme)
@@ -149,6 +166,16 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         )
         self.assertIn("The wrapper has no dry-run of its own.", index)
         self.assertIn(
+            "A missing or blank `BOB_OPENCLAW_INTEGRATION_ROOT` prints to stderr and",
+            index,
+        )
+        self.assertIn("returns exit status 2.", index)
+        self.assertIn("The wrapper does not load dotenv files.", index)
+        self.assertIn(
+            "The #28 CLI does not read `BOB_OPENCLAW_INTEGRATION_ROOT`.",
+            index,
+        )
+        self.assertIn(
             "`create-agent --dry-run` and `followup --dry-run` return `would_send: False` and do not POST.",
             index,
         )
@@ -156,6 +183,12 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
             "`stop-all-jobs` stays dry-run unless `--yes` is present (`dry_run = bool(args.dry_run) or not bool(args.yes)`).",
             index,
         )
+        self.assertIn(
+            "returns HTTP-style status `409` and does not POST stops.",
+            index,
+        )
+        self.assertIn("`diagnose --show-key` previews the first two and last two characters of", index)
+        self.assertIn("the preview is `***`.", index)
         self.assertIsNone(
             re.search(r"does not contain\s+`cursor_openclaw\.py`", index),
         )
@@ -167,19 +200,40 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("https://github.com/rupret007/Bob-the-Bot/pull/25", index)
         self.assertIn("3939c3abf9a65225d9c40caa4737e23c1b85bd0c", index)
         self.assertIn(
-            _blob(
-                "3939c3abf9a65225d9c40caa4737e23c1b85bd0c",
-                "docs/conductor-standing-order.md",
-            ),
-            index,
-        )
-        self.assertIn(
             "still allows only `none`, `codex`, `grok`, and `claude`",
             index,
         )
         self.assertIn("`gemini` and `minimax` appear only on that unmerged #25 head.", index)
         self.assertIn("does not merge, rebase, or vendor that tree", index)
         self.assertNotIn("| Conductor", index)
+        for path in CONDUCTOR_FILES:
+            self.assertIn(_blob(CONDUCTOR_SHA, path), index)
+        self.assertIn(
+            '`CONDUCTOR_AGENTS = frozenset({"codex", "claude", "gemini", "minimax", "grok"})`',
+            index,
+        )
+        self.assertIn(
+            '`ALLOWED_AGENTS = frozenset({"none"}) | CONDUCTOR_AGENTS`',
+            index,
+        )
+        self.assertIn('`WEBJAM_REPO = "rupret007/webjam"`', index)
+        self.assertIn("`dual_active_lease`", index)
+        self.assertIn("`webjam_dual_active_lease`", index)
+        self.assertIn(
+            '`ALLOWED_AGENTS = frozenset({"none", "codex", "grok", "claude"})`',
+            index,
+        )
+        self.assertIn("It does not define `CONDUCTOR_AGENTS` or `WEBJAM_REPO`.", index)
+        self.assertIn(
+            "It does not emit `dual_active_lease` or `webjam_dual_active_lease`.",
+            index,
+        )
+        self.assertIn(
+            "They are not written on the #25 standing order.",
+            index,
+        )
+        self.assertIn("does not mention Band", index)
+        self.assertIn("Thin Front Door + Silent Parallel Specialists", index)
         self.assertIn(_blob(DRAFTS[1]["sha"], "README.md"), index)
         self.assertIn(_blob(DRAFTS[2]["sha"], "README.md"), index)
         self.assertNotIn("CURSOR_API_KEY=", index)
@@ -193,6 +247,25 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
     def test_this_checkout_does_not_vendor_the_other_draft_trees(self) -> None:
         for path in ABSENT_FROM_THIS_CHECKOUT:
             self.assertFalse(path.exists(), path)
+
+    def test_this_checkout_auditor_does_not_vendor_the_25_conductor_contract(
+        self,
+    ) -> None:
+        audit = (ROOT / "tools" / "coord_audit.py").read_text(encoding="utf-8")
+        self.assertIn(
+            'ALLOWED_AGENTS = frozenset({"none", "codex", "grok", "claude"})',
+            audit,
+        )
+        self.assertNotIn("CONDUCTOR_AGENTS", audit)
+        self.assertNotIn("WEBJAM_REPO", audit)
+        self.assertNotIn("dual_active_lease", audit)
+        self.assertNotIn("webjam_dual_active_lease", audit)
+        template = (ROOT / ".github" / "ISSUE_TEMPLATE" / "coord.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("gemini", template)
+        self.assertNotIn("minimax", template)
+        self.assertNotIn("webjam", template.casefold())
 
     def test_index_stays_free_of_secrets_and_local_paths(self) -> None:
         for path in (INDEX, README, COORDINATION):

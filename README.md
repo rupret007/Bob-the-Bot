@@ -21,6 +21,10 @@ and secrets fences are written on the #27 and #28 heads. This OpenClaw map
 is the Stack Ops lane. WebJam and Show Night stay on their own coord issues.
 Stack Ops claims `coord: rupret007/Bob-the-Bot`. The conductor standing
 order stays on unmerged [draft #25](https://github.com/rupret007/Bob-the-Bot/pull/25) `3939c3abf9a65225d9c40caa4737e23c1b85bd0c`.
+#25 also edits `tools/coord_audit.py` to accept `gemini`/`minimax` and
+emit `dual_active_lease` / `webjam_dual_active_lease`. This checkout's
+auditor does not. Rank 1 labels (silent specialists, Band) are this
+index's target; they are not written on the #25 standing order.
 
 - [OpenClaw operator index](docs/openclaw-operator-index.md) (exact SHAs + file links)
 - Andrea bridge: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
