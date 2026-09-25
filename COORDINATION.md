@@ -97,6 +97,9 @@ not lift owner gates, and does not treat #27/#28 as a stack.
 
 - Native Cloud Agents first. `Cursor-OpenClaw-Integration` is **legacy**.
 - Andrea, gateway, and secrets stay out of Bob-the-Bot.
+- #26's fence text stops at the Andrea bridge. Gateway and secrets fences
+  are written on the #27 and #28 heads. The index section "Fence scope by
+  draft" is the map. This OpenClaw work is the Stack Ops lane.
 - fences: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
 - docs + wrapper: [draft #27](https://github.com/rupret007/Bob-the-Bot/pull/27) `d200c1d7b648fae65dc090609f6c2c3d0cd2b13f`
 - CLI vendor: [draft #28](https://github.com/rupret007/Bob-the-Bot/pull/28) `fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066`

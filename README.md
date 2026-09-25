@@ -12,7 +12,9 @@ out of Bob.
 The current OpenClaw work lives in three **separate unmerged drafts**. This
 repo indexes their exact heads and operator files; it does not merge them.
 #27 and #28 overlap (`docs/openclaw/` plus two leftover CLI stories) and
-are **not a stack**.
+are **not a stack**. #26's fence text stops at the Andrea bridge. Gateway
+and secrets fences are written on the #27 and #28 heads. This OpenClaw map
+is the Stack Ops lane. WebJam and Show Night stay on their own coord issues.
 
 - [OpenClaw operator index](docs/openclaw-operator-index.md) (exact SHAs + file links)
 - fences: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`

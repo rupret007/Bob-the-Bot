@@ -39,6 +39,8 @@ DRAFTS = (
             "docs/openclaw/operator-notes.md",
             "tools/openclaw/README.md",
             "tools/openclaw/cursor_openclaw.py",
+            "tools/openclaw/cursor_api_common.py",
+            "tools/openclaw/env_loader.py",
         ),
     },
 )
@@ -70,7 +72,11 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("docs/openclaw-operator-index.md", readme)
         self.assertIn("docs/openclaw-operator-index.md", coordination)
         self.assertIn("not a stack", readme)
+        self.assertIn("stops at the Andrea bridge", readme)
+        self.assertIn("Stack Ops lane", readme)
         self.assertIn("not treat #27/#28 as a stack", coordination)
+        self.assertIn("stops at the Andrea bridge", coordination)
+        self.assertIn("Stack Ops lane", coordination)
         for draft in DRAFTS:
             self.assertIn(draft["url"], readme)
             self.assertIn(draft["url"], coordination)
@@ -90,6 +96,15 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("alternative leftover drafts", index)
         self.assertIn("only hosted", index)
         self.assertIn("cross-link surface", index)
+        self.assertIn("stops at the Andrea bridge", index)
+        self.assertIn("Gateway and secrets fences are written on the #27 and #28 heads", index)
+        self.assertIn("leaves that source-of-truth claim on the #27 head", index)
+        self.assertIn("Stack Ops specialist lane", index)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/3", index)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/11", index)
+        self.assertIn(_blob(DRAFTS[1]["sha"], "README.md"), index)
+        self.assertIn(_blob(DRAFTS[2]["sha"], "README.md"), index)
+        self.assertNotIn("CURSOR_API_KEY=", index)
         for draft in DRAFTS:
             self.assertIn(draft["url"], index)
             self.assertIn(draft["sha"], index)
