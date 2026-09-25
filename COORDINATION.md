@@ -88,6 +88,26 @@ the current live-board receipt.
 
 Jeff still owns feel, send, spend, live Cisco, Che pull, Logic keys/WAVs, and merge when not leftover-green. Karen remains leftover + security ship-gate. Andrea send fence is unchanged.
 
+## Architecture: Thin Front Door + Silent Parallel Specialists
+
+Target pattern (Rank 1):
+
+- **Thin Front Door**: Bob-the-Bot is the protocol entry point. Agents
+  claim leases here before touching a repo. Bob owns protocol, skills
+  lane, and operator index. Skill files live on unmerged
+  [draft #24](https://github.com/rupret007/Bob-the-Bot/pull/24)
+  `8a6de73096b7ed4b9f09ff28dd123f5d9089b66d`. This checkout does not
+  contain them.
+- **Silent Parallel Specialists**: Lane (`gemini`) and MiniMax (`minimax`)
+  are silent capped peers. They do not appear in dashboard tiles or coord
+  comments. Parked on unmerged #25; not available in this checkout.
+- **Band**: on-demand only. Jeff invokes explicitly; no autonomous leases.
+- **Karen**: peer (leftover + security ship-gate).
+- **Andrea**: peer (send fence unchanged).
+
+See [docs/openclaw-operator-index.md](docs/openclaw-operator-index.md)
+section "Rank 1 architecture" for full state.
+
 ## OpenClaw operator index
 
 Operator map: [docs/openclaw-operator-index.md](docs/openclaw-operator-index.md).
@@ -97,7 +117,16 @@ not lift owner gates, and does not treat #27/#28 as a stack.
 
 - Native Cloud Agents first. `Cursor-OpenClaw-Integration` is **legacy**.
 - Andrea, gateway, and secrets stay out of Bob-the-Bot.
-- fences: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
+- #26's fence text stops at the Andrea bridge. Gateway and secrets fences
+  are written on the #27 and #28 heads. The index section "Fence scope by
+  draft" is the map. This OpenClaw work is the Stack Ops lane.
+- Stack Ops claims [coord: rupret007/Bob-the-Bot](https://github.com/rupret007/Bob-the-Bot/issues/22).
+  Do not claim WebJam, Show Night, or Andrea for this map.
+- The conductor standing order stays on unmerged [draft #25](https://github.com/rupret007/Bob-the-Bot/pull/25) `3939c3abf9a65225d9c40caa4737e23c1b85bd0c`. This PR does not stack it.
+- #25 also edits `tools/coord_audit.py` to accept `gemini`/`minimax` and emit `dual_active_lease` / `webjam_dual_active_lease`. This checkout's auditor does not.
+- #25's COORDINATION/README/template also rewrite the dashboard paint line, add the WebJam-absolute must-read, and write the five-agent template allowlist. This checkout's protocol text does not.
+- Rank 1 labels (silent specialists, Band) are this index's target. They are not written on the #25 standing order.
+- Andrea bridge: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
 - docs + wrapper: [draft #27](https://github.com/rupret007/Bob-the-Bot/pull/27) `d200c1d7b648fae65dc090609f6c2c3d0cd2b13f`
 - CLI vendor: [draft #28](https://github.com/rupret007/Bob-the-Bot/pull/28) `fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066`
 
