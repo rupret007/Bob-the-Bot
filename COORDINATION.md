@@ -87,3 +87,5 @@ the current live-board receipt.
 ## Owner gates
 
 Jeff still owns feel, send, spend, live Cisco, Che pull, Logic keys/WAVs, and merge when not leftover-green. Karen remains leftover + security ship-gate. Andrea send fence is unchanged.
+
+The contract workflow schedules only when this file, the coord issue template, the workflow file, `tools/`, or `tests/` change. A skills or Logic docs commit does not schedule it.
