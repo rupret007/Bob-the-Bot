@@ -87,3 +87,16 @@ the current live-board receipt.
 ## Owner gates
 
 Jeff still owns feel, send, spend, live Cisco, Che pull, Logic keys/WAVs, and merge when not leftover-green. Karen remains leftover + security ship-gate. Andrea send fence is unchanged.
+
+## OpenClaw operator index
+
+Operator map: [docs/openclaw-operator-index.md](docs/openclaw-operator-index.md).
+That file links README and this protocol across three **unmerged** drafts. It
+does not merge them and does not lift owner gates.
+
+- Native Cloud Agents first. `Cursor-OpenClaw-Integration` is **legacy**.
+- Andrea, gateway, and secrets stay out of Bob-the-Bot.
+- fences: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26)
+- docs: [draft #27](https://github.com/rupret007/Bob-the-Bot/pull/27)
+- CLI vendor: [draft #28](https://github.com/rupret007/Bob-the-Bot/pull/28)
+
