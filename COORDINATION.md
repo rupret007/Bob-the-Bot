@@ -2,7 +2,7 @@
 
 GitHub is the source of truth. Bob Ops only presents this state.
 
-Bob-the-Bot holds the protocol and one open coordination issue per repository. Codex, Grok Bot, and Claude read that issue before touching a repo and post a delta-only comment afterward. Do not mix this lane into product pull requests.
+Bob-the-Bot holds the protocol and one open coordination issue per repository. Codex, Claude, Gemini, MiniMax, and Grok read that issue before touching a repo and post a delta-only comment afterward. Do not mix this lane into product pull requests.
 
 ## Issue
 
@@ -18,7 +18,7 @@ Keep these keys, one per line:
 
 ```
 - repo: rupret007/<repo>
-- agent: none | codex | grok | claude
+- agent: none | codex | claude | gemini | minimax | grok
 - sha:
 - branch:
 - pr:
@@ -43,14 +43,22 @@ Rules:
 - Expire the lease on handoff (`agent: none`, clear `lease_until`) or when the clock passes `lease_until`.
 - Comments are delta-only. Do not rewrite history in a comment.
 - Private lanes stay high-level in any public presentment. No CSOne, customer rows, secrets, or local paths on the public board.
-- Dashboard refresh reads these issues and paints an active public-lane lease as `Codex lease` / `Grok lease` / `Claude lease`. CI still beats a lease. A lease is dead text, not a private-issue link.
+- Dashboard refresh reads these issues and paints an active public-lane lease (for Codex/Claude/Gemini/MiniMax/Grok). CI still beats a lease. A lease is dead text, not a private-issue link.
+
+## Conductor standing order (multi-LLM)
+
+- Keep all five conductor agents moving in parallel where safe: `codex`, `claude`, `gemini`, `minimax`, `grok`.
+- Concurrency is repo-scoped. Every active lease must map to one repo and one bounded `claimed_scope`.
+- `rupret007/webjam` is single-lane: never allow two live active leases at once.
+- If WebJam is already leased by another active agent, pick a different repo or wait for release/expiry.
+- The machine audit now emits `webjam_dual_active_lease` if two live WebJam leases appear in the same snapshot.
 
 ## Must read / must write
 
 Before working a repo:
 
 1. Read `coord: rupret007/<repo>`.
-2. If another agent holds an unexpired lease, do not start a second goal on that checkout.
+2. If another agent holds an unexpired lease, do not start a second goal on that checkout. For `rupret007/webjam`, this is absolute.
 3. Claim or wait.
 
 After a meaningful delta (draft PR, honest no-PR, merge, handoff):
