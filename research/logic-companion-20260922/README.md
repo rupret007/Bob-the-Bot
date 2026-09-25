@@ -1,15 +1,30 @@
-# Bob Sep 22 skill + research snapshot
+# Logic Companion Research — Sep 22, 2026
 
-Docs-only. No WebJam product code. No Logic integration implementation.
+Docs-only research snapshot. No WebJam product code. No Logic integration implementation.
 
-## skills/
-Pinned Bob workflows locked ~2026-09-22 (band ops desk, @andrea front door, show booking assist, WebJam UX gate, Codex/LLM mastery).
+## Contents
 
-## research/logic-companion-20260922/
-Excellence research, synthesis, testing plan, build brief, Fast-mode findings.
-**BUILD GATE:** no Logic product code until Jeff quality yes after review + per-enhancement tests.
+| File | Purpose |
+|------|---------|
+| `webjam-logic-pro-companion-20260922.md` | Primary research — APIs, protocols, architecture |
+| `webjam-logic-EXCELLENCE-RESEARCH.md` | Excellence north-star, edge cases, friction map, P0–P3 |
+| `webjam-logic-EXCELLENCE-SYNTHESIS.md` | Executive cut, Adopt/Defer/Kill, locked P0/P1/P2 |
+| `webjam-logic-TESTING-PLAN.md` | Per-enhancement acceptance tests |
+| `webjam-logic-companion-BUILD-BRIEF.md` | Goals, non-goals, phasing, PR strategy |
+| `codex-fast-mode-lightning-FINDINGS.md` | Fast mode toggle research (separate topic) |
+| `sources/` | Raw input from ChatGPT, Claude Opus, Gemini, MiniMax |
+| `critiques/` | Gemini and MiniMax critiques |
 
-## Explicit non-goals in this PR
-- Do not touch rupret007/webjam (lease held for #149)
-- Do not MATCH #145–#148
+## BUILD GATE
+
+**No Logic product code until:**
+1. Jeff reviews this research
+2. Jeff selects P0/P1 items in / out / defer
+3. Each selected item has passing test evidence Jeff accepts
+4. Jeff says "quality product OK" for that slice
+
+## Explicit non-goals
+- Do not touch `rupret007/webjam` (lease held for #149)
+- Do not MATCH #145–#148 without feel yes
 - Phone-as-transport remains PARKED
+- No Logic Remote reverse engineering

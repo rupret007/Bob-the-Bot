@@ -1,16 +1,9 @@
 ---
-name: Bob Codex queue inject
+name: Bob Codex queue inject 2
 description: >-
   use this when Bob needs to steer, resume, Set Goal, or follow-up a
   Jeff-watched ChatGPT Codex / Astra thread on the Mac Mini without Jeff pasting
-  — includes Goal progress-row controls and resource-discipline
----
----
-name: Bob Codex queue inject
-description: >-
-  use this when Bob needs to steer, resume, Set Goal, or follow-up a
-  Jeff-watched ChatGPT Codex / Astra thread on the Mac Mini without Jeff pasting
-  — includes Goal progress-row controls and resource-discipline
+  — includes Goal progress-row controls, resource-discipline, and Queued Steer exact target
 ---
 # Bob Codex queue inject (Mac Mini)
 
