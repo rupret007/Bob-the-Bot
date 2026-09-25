@@ -93,8 +93,11 @@ Jeff still owns feel, send, spend, live Cisco, Che pull, Logic keys/WAVs, and me
 Target pattern (Rank 1):
 
 - **Thin Front Door**: Bob-the-Bot is the protocol entry point. Agents
-  claim leases here before touching a repo. Bob owns protocol, skills,
-  and operator index.
+  claim leases here before touching a repo. Bob owns protocol, skills
+  lane, and operator index. Skill files live on unmerged
+  [draft #24](https://github.com/rupret007/Bob-the-Bot/pull/24)
+  `8a6de73096b7ed4b9f09ff28dd123f5d9089b66d`. This checkout does not
+  contain them.
 - **Silent Parallel Specialists**: Lane (`gemini`) and MiniMax (`minimax`)
   are silent capped peers. They do not appear in dashboard tiles or coord
   comments. Parked on unmerged #25; not available in this checkout.

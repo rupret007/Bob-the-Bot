@@ -282,10 +282,25 @@ That PR is parked; do not treat those agents as available until #25 lands.
 
 ### Skills ownership
 
-Bob-the-Bot owns the skills surface for the coordination protocol.
-Skill files, policy docs, and operator guides live here. Do not move
-them to Andrea, Integration, or external repositories without explicit
-handoff. Each skill remains a leftover until Jeff confirms it.
+Bob-the-Bot owns the skills lane for the coordination protocol.
+This checkout does not contain skill files. The pinned leftover is
+unmerged [draft #24](https://github.com/rupret007/Bob-the-Bot/pull/24)
+`8a6de73096b7ed4b9f09ff28dd123f5d9089b66d` on
+`bob/sep22-skills-logic-research`. Blob links are read-only pointers.
+This PR does not merge, rebase, or vendor that tree.
+
+- [skills/README.md](https://github.com/rupret007/Bob-the-Bot/blob/8a6de73096b7ed4b9f09ff28dd123f5d9089b66d/skills/README.md)
+  is the conductor card for ten pinned `SKILL.md` files under `skills/`.
+  That README says the folder is a git copy, not Bob's live skill store.
+  `sand-workflow:` links there are workflow IDs, not paths in this repo.
+- [research/logic-companion-20260922/README.md](https://github.com/rupret007/Bob-the-Bot/blob/8a6de73096b7ed4b9f09ff28dd123f5d9089b66d/research/logic-companion-20260922/README.md)
+  is a Logic research snapshot on the same head. No product code.
+  The BUILD GATE stays on that head. Jeff has not accepted a slice.
+
+Do not move the skills lane to Andrea, Integration, or external
+repositories without explicit handoff. Each skill remains a leftover
+until Jeff confirms it. This checkout also does not contain
+`research/logic-companion-20260922/`.
 
 ### Peer boundaries
 
@@ -307,6 +322,7 @@ claims or explicit handoff.
 
 - Merging or rebasing #26, #27, or #28
 - Merging or rebasing #25, or treating it as part of this OpenClaw stack
+- Merging or rebasing #24, or treating the skills snapshot as present in this checkout
 - Porting Andrea send/bridge code
 - Copying gateway binaries, LaunchAgent plists, or host runtime
 - Secret bootstrapping or runtime-store migration

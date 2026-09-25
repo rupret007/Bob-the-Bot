@@ -56,11 +56,18 @@ CONDUCTOR_FILES = (
     "README.md",
     ".github/ISSUE_TEMPLATE/coord.md",
 )
+SKILLS_SHA = "8a6de73096b7ed4b9f09ff28dd123f5d9089b66d"
+SKILLS_FILES = (
+    "skills/README.md",
+    "research/logic-companion-20260922/README.md",
+)
 ABSENT_FROM_THIS_CHECKOUT = (
     ROOT / "docs" / "openclaw",
     ROOT / "docs" / "conductor-standing-order.md",
     ROOT / "tools" / "openclaw",
     ROOT / "tools" / "openclaw_cli_fallback.py",
+    ROOT / "skills",
+    ROOT / "research",
 )
 SECRET_LIKE = re.compile(
     r"(?:CURSOR_API_KEY\s*=\s*\S+|sk-[A-Za-z0-9]{8,}|Bearer\s+[A-Za-z0-9._-]{12,})",
@@ -94,6 +101,9 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("auditor does not", readme)
         self.assertIn("This checkout's protocol text does not", readme)
         self.assertIn("are not written on the #25 standing order", readme)
+        self.assertIn("8a6de73096b7ed4b9f09ff28dd123f5d9089b66d", readme)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/pull/24", readme)
+        self.assertIn("This checkout does not contain", readme)
         self.assertNotIn("docs/conductor-standing-order.md", readme)
         self.assertIn("- agent: none | codex | grok | claude", coordination)
         self.assertIsNone(re.search(r"(?m)^- fences:", readme))
@@ -110,6 +120,9 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("webjam_dual_active_lease", coordination)
         self.assertIn("are not written on the #25 standing order", coordination)
         self.assertIn("`Codex lease` / `Grok lease` / `Claude lease`", coordination)
+        self.assertIn("8a6de73096b7ed4b9f09ff28dd123f5d9089b66d", coordination)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/pull/24", coordination)
+        self.assertIn("This checkout does not", coordination)
         self.assertNotIn("this is absolute", coordination)
         self.assertIsNone(re.search(r"(?m)^- fences:", coordination))
         for draft in DRAFTS:
@@ -265,6 +278,20 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("This checkout's template has neither line.", index)
         self.assertIn("does not mention Band", index)
         self.assertIn("Thin Front Door + Silent Parallel Specialists", index)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/pull/24", index)
+        self.assertIn(SKILLS_SHA, index)
+        self.assertIn("bob/sep22-skills-logic-research", index)
+        self.assertNotIn("Skill files, policy docs, and operator guides live here", index)
+        self.assertIn("This checkout does not contain skill files.", index)
+        self.assertIn("not Bob's live skill store", index)
+        self.assertIn("ten pinned `SKILL.md` files", index)
+        self.assertIn("BUILD GATE stays on that head", index)
+        self.assertIn("This checkout also does not contain", index)
+        self.assertIn("`research/logic-companion-20260922/`", index)
+        self.assertIn("treating the skills snapshot as present in this checkout", index)
+        for path in SKILLS_FILES:
+            self.assertIn(_blob(SKILLS_SHA, path), index)
+        self.assertNotIn("| Skills", index)
         self.assertIn(_blob(DRAFTS[1]["sha"], "README.md"), index)
         self.assertIn(_blob(DRAFTS[2]["sha"], "README.md"), index)
         self.assertNotIn("CURSOR_API_KEY=", index)

@@ -5,7 +5,10 @@ One `coord: rupret007/<repo>` issue per repository is the live lease. GitHub is 
 
 **Rank 1 architecture**: Thin Front Door + Silent Parallel Specialists.
 Bob is the entry point. Lane/MiniMax are silent capped peers (parked on #25).
-Band on-demand. Karen + Andrea stay peers. See [operator index](docs/openclaw-operator-index.md).
+Band on-demand. Karen + Andrea stay peers. Skill files live on unmerged
+[draft #24](https://github.com/rupret007/Bob-the-Bot/pull/24)
+`8a6de73096b7ed4b9f09ff28dd123f5d9089b66d`. This checkout does not contain
+them. See [operator index](docs/openclaw-operator-index.md).
 
 ## OpenClaw operator index
 
