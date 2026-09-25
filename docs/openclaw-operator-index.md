@@ -130,6 +130,10 @@ Pinned heads only. This index does not rewrite those files.
   The cwd path is `Path.cwd() / ".env"`. A path that is not a file is skipped.
   Keys already in the environment stay put, so the repo-root file wins over
   the cwd file when both set the same key.
+  After that merge, a missing or blank `CURSOR_API_KEY` makes every #28 subcommand except `diagnose` raise `CURSOR_API_KEY is required.`
+  `diagnose` still runs without that key.
+  A sole `--version` or `-V` returns before the key check.
+  The #27 wrapper does not read `CURSOR_API_KEY`.
   Credential values, including any `CURSOR_API_KEY` value, stay out of this
   repository and out of coord comments.
 

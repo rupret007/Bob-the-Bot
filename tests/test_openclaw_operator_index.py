@@ -127,6 +127,16 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
             "does not register an `artifact-index` subcommand",
             index,
         )
+        self.assertIn(
+            "missing or blank `CURSOR_API_KEY` makes every #28 subcommand except `diagnose` raise `CURSOR_API_KEY is required.`",
+            index,
+        )
+        self.assertIn("`diagnose` still runs without that key.", index)
+        self.assertIn(
+            "sole `--version` or `-V` returns before the key check.",
+            index,
+        )
+        self.assertIn("The #27 wrapper does not read `CURSOR_API_KEY`.", index)
         self.assertIsNone(
             re.search(r"does not contain\s+`cursor_openclaw\.py`", index),
         )
