@@ -99,6 +99,12 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("stops at the Andrea bridge", index)
         self.assertIn("Gateway and secrets fences are written on the #27 and #28 heads", index)
         self.assertIn("leaves that source-of-truth claim on the #27 head", index)
+        self.assertIn("does not vendor that CLI", index)
+        self.assertIn("scripts/cursor_openclaw.py", index)
+        self.assertIn("BOB_OPENCLAW_INTEGRATION_ROOT", index)
+        self.assertIsNone(
+            re.search(r"does not contain\s+`cursor_openclaw\.py`", index),
+        )
         self.assertIn("Stack Ops specialist lane", index)
         self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/3", index)
         self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/11", index)

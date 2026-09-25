@@ -98,9 +98,10 @@ Pinned heads only. This index does not rewrite those files.
   `services/andrea_sync`, `~/.openclaw`, LaunchAgent/gateway, BlueBubbles
   send/bridge, and credentials. Its
   [operator-guide.md](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/docs/openclaw/operator-guide.md)
-  calls the forwarder a vendored wrapper. The file shells out to an
-  operator-provided Integration checkout and does not contain
-  `cursor_openclaw.py`.
+  calls the forwarder a vendored wrapper.
+  [tools/openclaw_cli_fallback.py](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/tools/openclaw_cli_fallback.py)
+  does not vendor that CLI. It shells out to `scripts/cursor_openclaw.py`
+  inside the checkout named by `BOB_OPENCLAW_INTEGRATION_ROOT`.
   [docs/openclaw/README.md](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/docs/openclaw/README.md)
   calls that folder the source of truth for Bob-side OpenClaw policy. This
   index keeps `README.md` and `COORDINATION.md` as the entry points while
