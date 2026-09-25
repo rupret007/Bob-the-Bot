@@ -100,6 +100,9 @@ not lift owner gates, and does not treat #27/#28 as a stack.
 - #26's fence text stops at the Andrea bridge. Gateway and secrets fences
   are written on the #27 and #28 heads. The index section "Fence scope by
   draft" is the map. This OpenClaw work is the Stack Ops lane.
+- Stack Ops claims [coord: rupret007/Bob-the-Bot](https://github.com/rupret007/Bob-the-Bot/issues/22).
+  Do not claim WebJam, Show Night, or Andrea for this map.
+- The conductor standing order stays on unmerged [draft #25](https://github.com/rupret007/Bob-the-Bot/pull/25) `3939c3abf9a65225d9c40caa4737e23c1b85bd0c`. This PR does not stack it.
 - Andrea bridge: [draft #26](https://github.com/rupret007/Bob-the-Bot/pull/26) `b1eec45a2e1693656520412ebfce52157706f353`
 - docs + wrapper: [draft #27](https://github.com/rupret007/Bob-the-Bot/pull/27) `d200c1d7b648fae65dc090609f6c2c3d0cd2b13f`
 - CLI vendor: [draft #28](https://github.com/rupret007/Bob-the-Bot/pull/28) `fa4f41a1a8eb5e1d57eb7ffb24b24528b4a7c066`

@@ -49,6 +49,7 @@ DRAFTS = (
 )
 ABSENT_FROM_THIS_CHECKOUT = (
     ROOT / "docs" / "openclaw",
+    ROOT / "docs" / "conductor-standing-order.md",
     ROOT / "tools" / "openclaw",
     ROOT / "tools" / "openclaw_cli_fallback.py",
 )
@@ -78,11 +79,16 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
         self.assertIn("stops at the Andrea bridge", readme)
         self.assertIn("Stack Ops lane", readme)
         self.assertIn("- Andrea bridge: [draft #26]", readme)
+        self.assertIn("coord: rupret007/Bob-the-Bot", readme)
+        self.assertIn("3939c3abf9a65225d9c40caa4737e23c1b85bd0c", readme)
         self.assertIsNone(re.search(r"(?m)^- fences:", readme))
         self.assertIn("not treat #27/#28 as a stack", coordination)
         self.assertIn("stops at the Andrea bridge", coordination)
         self.assertIn("Stack Ops lane", coordination)
         self.assertIn("- Andrea bridge: [draft #26]", coordination)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/22", coordination)
+        self.assertIn("3939c3abf9a65225d9c40caa4737e23c1b85bd0c", coordination)
+        self.assertIn("This PR does not stack it.", coordination)
         self.assertIsNone(re.search(r"(?m)^- fences:", coordination))
         for draft in DRAFTS:
             self.assertIn(draft["url"], readme)
@@ -137,12 +143,43 @@ class OpenClawOperatorIndexTests(unittest.TestCase):
             index,
         )
         self.assertIn("The #27 wrapper does not read `CURSOR_API_KEY`.", index)
+        self.assertIn(
+            "A sole `--version` or `-V` is rejected because those tokens are not in `ALLOWED_COMMANDS`.",
+            index,
+        )
+        self.assertIn("The wrapper has no dry-run of its own.", index)
+        self.assertIn(
+            "`create-agent --dry-run` and `followup --dry-run` return `would_send: False` and do not POST.",
+            index,
+        )
+        self.assertIn(
+            "`stop-all-jobs` stays dry-run unless `--yes` is present (`dry_run = bool(args.dry_run) or not bool(args.yes)`).",
+            index,
+        )
         self.assertIsNone(
             re.search(r"does not contain\s+`cursor_openclaw\.py`", index),
         )
         self.assertIn("Stack Ops specialist lane", index)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/22", index)
         self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/3", index)
         self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/11", index)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/issues/6", index)
+        self.assertIn("https://github.com/rupret007/Bob-the-Bot/pull/25", index)
+        self.assertIn("3939c3abf9a65225d9c40caa4737e23c1b85bd0c", index)
+        self.assertIn(
+            _blob(
+                "3939c3abf9a65225d9c40caa4737e23c1b85bd0c",
+                "docs/conductor-standing-order.md",
+            ),
+            index,
+        )
+        self.assertIn(
+            "still allows only `none`, `codex`, `grok`, and `claude`",
+            index,
+        )
+        self.assertIn("`gemini` and `minimax` appear only on that unmerged #25 head.", index)
+        self.assertIn("does not merge, rebase, or vendor that tree", index)
+        self.assertNotIn("| Conductor", index)
         self.assertIn(_blob(DRAFTS[1]["sha"], "README.md"), index)
         self.assertIn(_blob(DRAFTS[2]["sha"], "README.md"), index)
         self.assertNotIn("CURSOR_API_KEY=", index)

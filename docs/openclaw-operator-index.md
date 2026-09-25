@@ -21,6 +21,8 @@ together, vendor their CLI, or replace their fence text.
 - Drafts #27 and #28 both invent an OpenClaw docs/README surface and a
   fallback CLI story. They **overlap**. They are **not a stack**. Do not
   merge them together from this PR.
+- Stack Ops claims `coord: rupret007/Bob-the-Bot`. The conductor standing
+  order is a separate unmerged leftover.
 
 ## Pinned unmerged drafts (do not merge from this PR)
 
@@ -110,6 +112,8 @@ Pinned heads only. This index does not rewrite those files.
   Otherwise the first of those tokens must be in `ALLOWED_COMMANDS`.
   The full argument list is forwarded unchanged. `artifact-index` is in that allowlist.
   The #28 vendored CLI does not register an `artifact-index` subcommand.
+  A sole `--version` or `-V` is rejected because those tokens are not in `ALLOWED_COMMANDS`.
+  The wrapper has no dry-run of its own.
   [docs/openclaw/README.md](https://github.com/rupret007/Bob-the-Bot/blob/d200c1d7b648fae65dc090609f6c2c3d0cd2b13f/docs/openclaw/README.md)
   calls that folder the source of truth for Bob-side OpenClaw policy. This
   index keeps `README.md` and `COORDINATION.md` as the entry points while
@@ -134,16 +138,28 @@ Pinned heads only. This index does not rewrite those files.
   `diagnose` still runs without that key.
   A sole `--version` or `-V` returns before the key check.
   The #27 wrapper does not read `CURSOR_API_KEY`.
+  `create-agent --dry-run` and `followup --dry-run` return `would_send: False` and do not POST.
+  `stop-all-jobs` stays dry-run unless `--yes` is present (`dry_run = bool(args.dry_run) or not bool(args.yes)`).
   Credential values, including any `CURSOR_API_KEY` value, stay out of this
   repository and out of coord comments.
 
 ## Stack Ops lane
 
 This index is the Stack Ops specialist lane for OpenClaw operator docs.
+Claim [coord: rupret007/Bob-the-Bot](https://github.com/rupret007/Bob-the-Bot/issues/22) for this map.
+Comments are delta-only. Do not mix this map into product pull requests.
 Work on other specialist lanes stays on their own coordination issues:
 
 - WebJam: [coord: rupret007/webjam](https://github.com/rupret007/Bob-the-Bot/issues/3)
 - Show Night: [coord: rupret007/rad-dad-show-night](https://github.com/rupret007/Bob-the-Bot/issues/11)
+- Andrea: [coord: rupret007/Andrea_NanoBot](https://github.com/rupret007/Bob-the-Bot/issues/6)
+
+The conductor standing order (five-agent allowlist and WebJam single-lane) lives on unmerged [draft #25](https://github.com/rupret007/Bob-the-Bot/pull/25) `3939c3abf9a65225d9c40caa4737e23c1b85bd0c`.
+This PR does not merge, rebase, or vendor that tree.
+This checkout still allows only `none`, `codex`, `grok`, and `claude` in `tools/coord_audit.py`.
+`gemini` and `minimax` appear only on that unmerged #25 head.
+
+- [docs/conductor-standing-order.md](https://github.com/rupret007/Bob-the-Bot/blob/3939c3abf9a65225d9c40caa4737e23c1b85bd0c/docs/conductor-standing-order.md)
 
 ## Backlinks
 
@@ -152,8 +168,9 @@ cross-link surface for those three drafts.
 
 ## Operator path
 
-1. Read [COORDINATION.md](../COORDINATION.md) and claim the live `coord:`
-   lease before work.
+1. Read [COORDINATION.md](../COORDINATION.md) and claim the live
+   `coord: rupret007/Bob-the-Bot` lease
+   ([#22](https://github.com/rupret007/Bob-the-Bot/issues/22)) before work.
 2. Prefer native Cloud Agent tools.
 3. If a fallback is still required, review the **legacy** Integration CLI
    stories on the exact #27 and #28 heads above. They overlap; do not treat
@@ -163,8 +180,10 @@ cross-link surface for those three drafts.
 ## Out of scope here
 
 - Merging or rebasing #26, #27, or #28
+- Merging or rebasing #25, or treating it as part of this OpenClaw stack
 - Porting Andrea send/bridge code
 - Copying gateway binaries, LaunchAgent plists, or host runtime
 - Secret bootstrapping or runtime-store migration
 - Auto-send behavior
+- Claiming WebJam, Show Night, or Andrea leases for this map
 - WebJam coding and Show Night (those lanes stay on their coord issues)
