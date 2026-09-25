@@ -88,6 +88,23 @@ the current live-board receipt.
 
 Jeff still owns feel, send, spend, live Cisco, Che pull, Logic keys/WAVs, and merge when not leftover-green. Karen remains leftover + security ship-gate. Andrea send fence is unchanged.
 
+## Architecture: Thin Front Door + Silent Parallel Specialists
+
+Target pattern (Rank 1):
+
+- **Thin Front Door**: Bob-the-Bot is the protocol entry point. Agents
+  claim leases here before touching a repo. Bob owns protocol, skills,
+  and operator index.
+- **Silent Parallel Specialists**: Lane (`gemini`) and MiniMax (`minimax`)
+  are silent capped peers. They do not appear in dashboard tiles or coord
+  comments. Parked on unmerged #25; not available in this checkout.
+- **Band**: on-demand only. Jeff invokes explicitly; no autonomous leases.
+- **Karen**: peer (leftover + security ship-gate).
+- **Andrea**: peer (send fence unchanged).
+
+See [docs/openclaw-operator-index.md](docs/openclaw-operator-index.md)
+section "Rank 1 architecture" for full state.
+
 ## OpenClaw operator index
 
 Operator map: [docs/openclaw-operator-index.md](docs/openclaw-operator-index.md).

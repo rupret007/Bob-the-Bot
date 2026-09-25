@@ -3,6 +3,10 @@
 Private application lane. Coordination protocol: [COORDINATION.md](COORDINATION.md).
 One `coord: rupret007/<repo>` issue per repository is the live lease. GitHub is authoritative. Bob Ops only presents that state.
 
+**Rank 1 architecture**: Thin Front Door + Silent Parallel Specialists.
+Bob is the entry point. Lane/MiniMax are silent capped peers (parked on #25).
+Band on-demand. Karen + Andrea stay peers. See [operator index](docs/openclaw-operator-index.md).
+
 ## OpenClaw operator index
 
 Native Cloud Agent tools are first. `Cursor-OpenClaw-Integration` is a

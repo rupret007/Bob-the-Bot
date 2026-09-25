@@ -181,6 +181,34 @@ cross-link surface for those three drafts.
 
 Recorded here so the OpenClaw fence scope reflects the live org structure.
 
+### Rank 1 architecture: Thin Front Door + Silent Parallel Specialists
+
+The target coordination pattern:
+
+- **Thin Front Door**: Bob-the-Bot is the protocol entry point. Agents
+  read coordination issues here before touching a repo. Bob holds the
+  lease protocol, skills surface, and operator index. It does not own
+  Andrea, Integration, or external repo content.
+- **Silent Parallel Specialists**: Lane (`gemini`) and MiniMax (`minimax`)
+  operate as silent capped peers. They do not announce themselves in
+  coord comments or dashboard tiles. They run within a cap and report
+  deltas only. They are parked on unmerged #25 (`3939c3abf9a65225d9c40caa4737e23c1b85bd0c`)
+  and are not available in this checkout.
+- **Band**: on-demand. Band is not part of the standing conductor allowlist.
+  Jeff invokes it explicitly for specific tasks. It does not hold leases
+  or claim scopes autonomously.
+- **Karen**: leftover + security ship-gate. Ships leftovers and reviews
+  security-gated changes. Peer status. Does not own OpenClaw CLI vendor
+  or skills.
+- **Andrea**: send fence unchanged. `andrea_sync` and BlueBubbles bridge
+  stay in Andrea_NanoBot. Peer status. Does not port OpenClaw fallback
+  stories or vendor the coordination protocol.
+
+Current state: this checkout allows only `none`, `codex`, `grok`, and
+`claude` in `tools/coord_audit.py`. The silent specialists (Lane/MiniMax)
+appear only on unmerged #25. Until #25 lands, the thin-front-door pattern
+is incomplete. Codex, Grok, and Claude are the active conductor agents.
+
 ### Agent allowlist
 
 This checkout allows only `none`, `codex`, `grok`, and `claude` in
