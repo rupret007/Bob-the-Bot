@@ -13,7 +13,7 @@ Jeff is watching a named ChatGPT.app / Codex Goal on the Mac Mini and Bob must i
 Pair with [Codex Goal mastery](sand-workflow:codex-goal-mastery) (what to write) and [Codex prompt audit](sand-workflow:codex-prompt-audit) (prove it landed).
 
 ## Machine
-Only `Jeffs-Mac-mini.local` (`machineId` `53abfd07-b321-433b-b068-55620c6c756d`) until Jeff reopens other Macs.
+Only `Jeffs-Mac-mini.local` until Jeff reopens other Macs.
 
 ## Resource discipline (hard)
 1. **One coding lane** on a checkout: Astra/Codex OR Cloud — never dual-lease the same WebJam tree.

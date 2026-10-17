@@ -13,7 +13,7 @@ Jeff is watching a named ChatGPT.app / Codex Goal on the Mac Mini and Bob must i
 Pair with [Codex Goal mastery](sand-workflow:codex-goal-mastery) (what to write) and [Codex prompt audit](sand-workflow:codex-prompt-audit) (prove it landed).
 
 ## Machine
-Only `Jeffs-Mac-mini.local` (`machineId` `53abfd07-b321-433b-b068-55620c6c756d`) until Jeff reopens other Macs. For Mini GUI, use Mini Shell/screencapture/osascript — not box computerUse.
+Only `Jeffs-Mac-mini.local` until Jeff reopens other Macs. For Mini GUI, use Mini Shell/screencapture/osascript — not box computerUse.
 
 ## New chat (Jeff 2026-09-22)
 - **⌘N (Cmd+N)** opens a new ChatGPT Codex chat on the Mini.

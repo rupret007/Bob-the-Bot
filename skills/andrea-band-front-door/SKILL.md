@@ -39,7 +39,7 @@ Same-thread only for *message history*. Band-manager work is not limited to quot
 3. Who asked, exact ask, deadline, links, whether Jeff already answered.
 4. Wake Jeff for real asks / money / pitch / privacy-probe; quiet on banter / duplicates.
 5. Draft a useful manager reply (not a useless “I’ll check”). Use Find a show and assist booking + Band music ops desk when relevant.
-6. Draft → Jeff yes → Andrea send (unless standing permission covers that exact watch).
+6. Draft → Jeff yes → Andrea send.
 
 ## Engine rules
 - Wake packet: chat name, guid, sender (redacted), exact quote, same-chat context, intent. No other-chat transcripts.
