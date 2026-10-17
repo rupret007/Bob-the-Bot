@@ -7,6 +7,7 @@ const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const skippedDirectories = new Set([
   '.git',
   '.engine',
+  '__pycache__',
   'node_modules',
   'coverage',
 ]);
