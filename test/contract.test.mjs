@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -99,6 +100,18 @@ test('the example config contains only non-secret fail-closed defaults', () => {
   for (const key of Object.keys(rows)) {
     assert.doesNotMatch(key, /TOKEN|API_KEY|PASSWORD|SECRET|URL|PHONE|CONTACT/u);
   }
+});
+
+test('the coordination layer passes the repository privacy scanner', () => {
+  const result = spawnSync(process.execPath, ['scripts/privacy-check.mjs'], {
+    cwd: root,
+    encoding: 'utf8',
+  });
+  assert.equal(
+    result.status,
+    0,
+    result.stderr || result.stdout || 'privacy scanner failed',
+  );
 });
 
 test('CI is read-only, pinned, offline at test time, and deployment-free', () => {

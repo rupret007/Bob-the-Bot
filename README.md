@@ -7,6 +7,11 @@ messaging engine and guarded OpenClaw delegation.
 Status: bootstrap only. This repository does not deploy, start, restart, message,
 or configure a live runtime.
 
+Coordination protocol: [COORDINATION.md](COORDINATION.md). One `coord: rupret007/<repo>`
+issue per repository is the live lease. GitHub is authoritative. Bob Ops only
+presents that state. Conductor standing order:
+[docs/conductor-standing-order.md](docs/conductor-standing-order.md).
+
 ## Why this repository is thin
 
 The working messaging, approval, and OpenClaw integration code already exists in
@@ -25,6 +30,13 @@ reproducible Bob overlay plus independent acceptance checks.
 
 Bob Ops Dashboard remains a separate portfolio control plane. It is not the Bob
 application runtime.
+
+## OpenClaw operator surface
+
+Bob keeps OpenClaw operator policy and optional CLI fallback docs under
+[`docs/openclaw/`](docs/openclaw/), with native Cloud Agent tools as the
+default path. Local runtime/gateway state, `andrea_sync`, and BlueBubbles send
+engine internals remain outside Bob.
 
 ## What is included
 
@@ -46,6 +58,11 @@ live services.
 
     npm ci --ignore-scripts
     npm run check
+
+Coordination contract tests (Python 3.12):
+
+    python -m compileall -q tools tests
+    python -m unittest discover -s tests -p "test_*.py" -v
 
 To verify the integration itself, use a disposable clone only:
 
