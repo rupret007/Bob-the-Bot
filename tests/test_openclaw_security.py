@@ -5,6 +5,7 @@ import io
 import json
 import os
 from pathlib import Path
+import stat
 import ssl
 import subprocess
 import sys
@@ -73,14 +74,18 @@ class DotenvSecurityTests(unittest.TestCase):
                 cli.env_loader.merge_dotenv_paths([dotenv], override=True)
                 self.assertEqual(os.environ["PATH"], "original")
 
-    def test_symlinked_repository_dotenv_is_rejected_before_open(self) -> None:
+    def test_symlinked_dotenv_is_refused_at_lstat_before_open(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "repo"
             script_dir = root / "tools" / "openclaw"
             script_dir.mkdir(parents=True)
+            dotenv = root / ".env"
             target = Path(tmp) / "credentials"
-            target.write_text("CURSOR_API_KEY=outside\n", encoding="utf-8")
-            (root / ".env").symlink_to(target)
+            target.write_text("CURSOR_API_KEY=outside\nCURSOR_AUTH_MODE=bearer\n", encoding="utf-8")
+            dotenv.symlink_to(target)
+            st = dotenv.lstat()
+            self.assertTrue(stat.S_ISLNK(st.st_mode))
+            self.assertFalse(stat.S_ISREG(st.st_mode))
             for dangling in (False, True):
                 if dangling:
                     target.unlink()
@@ -93,16 +98,25 @@ class DotenvSecurityTests(unittest.TestCase):
                     cli._load_repo_dotenv()
                     self.assertEqual(dict(os.environ), {})
                     open_file.assert_not_called()
+            with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(cli.env_loader.os, "open") as open_file:
+                self.assertEqual(cli.env_loader.merge_dotenv_paths([dotenv]), [])
+                self.assertEqual(dict(os.environ), {})
+                open_file.assert_not_called()
 
-    def test_dotenv_replaced_by_symlink_during_open_is_rejected(self) -> None:
+    def test_dotenv_replaced_by_symlink_during_open_is_refused_at_open(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             dotenv = Path(tmp) / ".env"
             target = Path(tmp) / "outside"
             dotenv.write_text("CURSOR_API_KEY=initial\n", encoding="utf-8")
-            target.write_text("CURSOR_API_KEY=outside\n", encoding="utf-8")
+            target.write_text("CURSOR_API_KEY=outside\nCURSOR_AUTH_MODE=bearer\n", encoding="utf-8")
             real_open = os.open
+            nofollow = getattr(os, "O_NOFOLLOW", 0)
+            self.assertNotEqual(nofollow, 0, "O_NOFOLLOW required for symlink refusal during open")
+            open_calls: list[tuple[object, int]] = []
 
             def replace_then_open(path, flags):
+                open_calls.append((path, flags))
+                self.assertEqual(flags & nofollow, nofollow)
                 dotenv.unlink()
                 dotenv.symlink_to(target)
                 return real_open(path, flags)
@@ -110,14 +124,21 @@ class DotenvSecurityTests(unittest.TestCase):
             with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(cli.env_loader.os, "open", side_effect=replace_then_open):
                 self.assertEqual(cli.env_loader.merge_dotenv_paths([dotenv]), [])
                 self.assertNotIn("CURSOR_API_KEY", os.environ)
+                self.assertNotIn("CURSOR_AUTH_MODE", os.environ)
+            self.assertEqual(len(open_calls), 1)
 
     def test_git_ignores_root_and_nested_dotenv(self) -> None:
         repo = Path(__file__).resolve().parents[1]
+        gitignore = (repo / ".gitignore").read_text(encoding="utf-8").splitlines()
+        self.assertIn(".env", [line.strip() for line in gitignore if line.strip() and not line.strip().startswith("#")])
         result = subprocess.run(
-            ["git", "check-ignore", "--no-index", ".env", "tools/openclaw/.env"],
+            ["git", "check-ignore", "-v", "--no-index", ".env", "tools/openclaw/.env"],
             cwd=repo, capture_output=True, text=True, check=True,
         )
-        self.assertEqual(result.stdout.splitlines(), [".env", "tools/openclaw/.env"])
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stderr, "")
+        ignored_paths = [line.split("\t", 2)[-1] for line in result.stdout.splitlines()]
+        self.assertEqual(ignored_paths, [".env", "tools/openclaw/.env"])
 
 
 class TransportSecurityTests(unittest.TestCase):
