@@ -77,6 +77,21 @@ class CoordinationAuditTests(unittest.TestCase):
             _codes(coord_audit.audit_snapshot([active], now=NOW)),
         )
 
+    def test_all_conductor_agents_are_supported(self) -> None:
+        for agent in sorted(coord_audit.CONDUCTOR_AGENTS):
+            with self.subTest(agent=agent):
+                receipt = coord_audit.audit_snapshot(
+                    [
+                        _issue(
+                            agent=agent,
+                            lease_until="2026-09-03T21:20:00-05:00",
+                            claimed_scope="one bounded improvement",
+                        )
+                    ],
+                    now=NOW,
+                )
+                self.assertTrue(receipt["passed"], receipt)
+
     def test_released_issue_cannot_retain_a_lease(self) -> None:
         receipt = coord_audit.audit_snapshot(
             [_issue(lease_until="2026-09-03T21:20:00-05:00")], now=NOW
@@ -109,6 +124,25 @@ class CoordinationAuditTests(unittest.TestCase):
         self.assertEqual(
             _codes(receipt), {"duplicate_issue_number", "duplicate_repo"}
         )
+
+    def test_webjam_cannot_have_two_live_active_leases(self) -> None:
+        first = _issue(
+            number=3,
+            repo="rupret007/webjam",
+            agent="codex",
+            lease_until="2026-09-03T21:20:00-05:00",
+            claimed_scope="stability pass",
+        )
+        second = _issue(
+            number=4,
+            repo="rupret007/webjam",
+            agent="gemini",
+            lease_until="2026-09-03T22:20:00-05:00",
+            claimed_scope="edge-case pass",
+        )
+        codes = _codes(coord_audit.audit_snapshot([first, second], now=NOW))
+        self.assertIn("dual_active_lease", codes)
+        self.assertIn("webjam_dual_active_lease", codes)
 
     def test_body_values_are_never_echoed_in_failure_receipt(self) -> None:
         private_path = "/Users/private-name/secret/project"
