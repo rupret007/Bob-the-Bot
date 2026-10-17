@@ -1,2 +1,10 @@
+.engine/
 __pycache__/
+*.py[cod]
 *.pyc
+node_modules/
+coverage/
+.env
+.env.*
+*.log
+.DS_Store

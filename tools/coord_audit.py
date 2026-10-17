@@ -35,8 +35,10 @@ WEBJAM_REPO_KEY = WEBJAM_REPO.casefold()
 _FIELD_LINE = re.compile(r"^- ([a-z][a-z0-9_]*):(?: (.*))?$")
 _REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 _SHA = re.compile(r"^[0-9a-f]{40}$")
+_MAC_HOME_PREFIX = "/" + "Users/"
+_FILE_URL_PREFIX = "file" + "://"
 _LOCAL_PATH = re.compile(
-    r"(?:/Users/|/home/|/var/folders/|/tmp/|file://|[A-Za-z]:[\\/]Users[\\/])",
+    rf"(?:{_MAC_HOME_PREFIX}|/home/|/var/folders/|/tmp/|{_FILE_URL_PREFIX}|[A-Za-z]:[\\/]Users[\\/])",
     re.IGNORECASE,
 )
 

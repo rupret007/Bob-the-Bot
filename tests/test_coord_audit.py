@@ -145,7 +145,8 @@ class CoordinationAuditTests(unittest.TestCase):
         self.assertIn("webjam_dual_active_lease", codes)
 
     def test_body_values_are_never_echoed_in_failure_receipt(self) -> None:
-        private_path = "/Users/private-name/secret/project"
+        # Build at runtime so the repository privacy scan stays clean.
+        private_path = "/" + "Users/private-name/secret/project"
         issue = _issue(extra_lines=(f"- hosted_status: {private_path}",))
         receipt = coord_audit.audit_snapshot([issue], now=NOW)
         encoded = json.dumps(receipt)

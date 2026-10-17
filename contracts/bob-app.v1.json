@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "application": {
+    "id": "bob-the-bot",
+    "displayName": "Bob",
+    "telegramDisplayName": "Bot the Bot",
+    "repository": "https://github.com/rupret007/Bob-the-Bot",
+    "visibility": "private"
+  },
+  "engine": {
+    "name": "Andrea NanoBot",
+    "repository": "https://github.com/rupret007/Andrea_NanoBot",
+    "baseCommit": "f8655e2da59d1db8bd3777758ae8220ecb65d847"
+  },
+  "delegation": {
+    "name": "OpenClaw",
+    "mode": "guarded",
+    "publicOnlyWhenExplicitlyAddressed": true
+  },
+  "overlay": {
+    "path": "patches/andrea-bob-overlay.patch",
+    "sha256": "e129cc36c3599000014b359bbf5a1ebce04ded373e2cce61fb5824f8a32ac85f",
+    "patchId": "f6f1d4cb4e238485f5cd96b672c5bb30d2c73b16",
+    "expectedResultTree": "58f3e0a88ddd0d60a613331f0bc266aea5d51d04",
+    "historicalProvenance": {
+      "classification": "local_unpublished_history",
+      "changeCount": 6,
+      "remoteReachability": "not_asserted",
+      "authoritativeForReplay": false,
+      "rawCommitIdsIncluded": false
+    },
+    "refinement": {
+      "purpose": "Align inherited tests with Bob natural UX and keep send approval visible in short Telegram copy.",
+      "files": [
+        "src/channels/telegram.test.ts",
+        "src/channels/telegram.ts",
+        "src/direct-quick-reply.test.ts"
+      ]
+    },
+    "securityRepair": {
+      "purpose": "Keep denied completion claims behind the authorization fallback for Telegram natural UX.",
+      "files": [
+        "src/cognitive-runtime-completion.test.ts",
+        "src/cognitive-runtime-completion.ts",
+        "src/index.ts"
+      ]
+    },
+    "compatibilityRepair": {
+      "purpose": "Preserve explicit OpenClaw addressing and align identity-aware full-suite expectations.",
+      "files": [
+        "src/alexa.test.ts",
+        "src/config.ts",
+        "src/formatting.test.ts",
+        "src/telegram-roundtrip.test.ts",
+        "src/user-facing-fallback.test.ts"
+      ]
+    },
+    "touchedPaths": [
+      "groups/global/CLAUDE.md",
+      "groups/main/CLAUDE.md",
+      "src/alexa.test.ts",
+      "src/assistant-personalization.ts",
+      "src/assistant-routing.ts",
+      "src/channels/bluebubbles.ts",
+      "src/channels/telegram.test.ts",
+      "src/channels/telegram.ts",
+      "src/cognitive-runtime-completion.test.ts",
+      "src/cognitive-runtime-completion.ts",
+      "src/command-surface-registry.ts",
+      "src/config.ts",
+      "src/container-runner-controls.test.ts",
+      "src/container-runner.ts",
+      "src/conversational-core.ts",
+      "src/direct-quick-reply.test.ts",
+      "src/direct-quick-reply.ts",
+      "src/formatting.test.ts",
+      "src/index.ts",
+      "src/telegram-roundtrip.test.ts",
+      "src/user-facing-fallback.test.ts"
+    ]
+  },
+  "safety": {
+    "liveNetworkRequired": false,
+    "credentialsRequired": false,
+    "outboundMessagingDefault": false,
+    "gatewayRestartRequired": false,
+    "productionDeploymentRequired": false
+  }
+}
