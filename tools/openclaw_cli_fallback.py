@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Thin Bob wrapper for optional OpenClaw CLI fallback.
 
-This wrapper forwards safe operator commands to
+This wrapper forwards operator commands to
 Cursor-OpenClaw-Integration/scripts/cursor_openclaw.py when native Cloud Agent
-tooling is unavailable.
+tooling is unavailable. Forwarded commands include both read and mutating
+operations, including creating, updating, stopping, and deleting agents.
 """
 
 from __future__ import annotations
@@ -13,7 +14,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ALLOWED_COMMANDS = {
+FORWARDED_COMMANDS = {
     "diagnose",
     "whoami",
     "models",
@@ -22,7 +23,6 @@ ALLOWED_COMMANDS = {
     "conversation",
     "artifacts",
     "artifact-download-url",
-    "artifact-index",
     "create-agent",
     "followup",
     "stop-agent",
@@ -44,9 +44,10 @@ def _resolve_integration_script(root: str) -> Path:
 def _validate_command(argv: list[str]) -> None:
     if not argv:
         raise ValueError("Usage: openclaw_cli_fallback.py <command> [args...]")
-    if argv[0] not in ALLOWED_COMMANDS:
+    if argv[0] not in FORWARDED_COMMANDS:
         raise ValueError(
-            f"Unsupported command '{argv[0]}'. Allowed: {', '.join(sorted(ALLOWED_COMMANDS))}"
+            f"Unsupported command '{argv[0]}'. "
+            f"Forwarded commands: {', '.join(sorted(FORWARDED_COMMANDS))}"
         )
 
 

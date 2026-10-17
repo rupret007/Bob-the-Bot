@@ -31,6 +31,10 @@ Bob vendors a thin wrapper:
 The wrapper does not reimplement `cursor_openclaw.py`; it forwards to an
 operator-provided local clone of `Cursor-OpenClaw-Integration`.
 
+Forwarded commands include mutating operations: `create-agent`, `followup`,
+`stop-agent`, `stop-all-jobs`, and `delete-agent`. The wrapper validates command
+names but does not add authorization checks.
+
 Required env var:
 
 ```bash
