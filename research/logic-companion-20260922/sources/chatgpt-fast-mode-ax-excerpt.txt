@@ -1,0 +1,55 @@
+# Excerpt only — Fast mode / effort related AX lines
+              AXStaticText|Clear the current composer prompt
+                AXStaticText|Unassigned
+              AXStaticText|Cycle reasoning effort
+              AXStaticText|Cycle through composer reasoning effort options
+                AXStaticText|Unassigned
+---
+                AXStaticText|Unassigned
+              AXStaticText|Cycle reasoning effort
+              AXStaticText|Cycle through composer reasoning effort options
+                AXStaticText|Unassigned
+              AXStaticText|Decrease reasoning effort
+---
+              AXStaticText|Cycle through composer reasoning effort options
+                AXStaticText|Unassigned
+              AXStaticText|Decrease reasoning effort
+              AXStaticText|Decrease the current composer reasoning effort
+                AXStaticText|Unassigned
+---
+                AXStaticText|Unassigned
+              AXStaticText|Decrease reasoning effort
+              AXStaticText|Decrease the current composer reasoning effort
+                AXStaticText|Unassigned
+              AXStaticText|Increase reasoning effort
+---
+              AXStaticText|Decrease the current composer reasoning effort
+                AXStaticText|Unassigned
+              AXStaticText|Increase reasoning effort
+              AXStaticText|Increase the current composer reasoning effort
+                AXStaticText|Unassigned
+---
+                AXStaticText|Unassigned
+              AXStaticText|Increase reasoning effort
+              AXStaticText|Increase the current composer reasoning effort
+                AXStaticText|Unassigned
+              AXStaticText|Open model picker
+---
+              AXStaticText|Increase the current composer reasoning effort
+                AXStaticText|Unassigned
+              AXStaticText|Open model picker
+              AXStaticText|Open the composer model picker
+                AXStaticText|⌃⇧M
+---
+              AXStaticText|Send the current composer message without opening its chat
+                AXStaticText|⌘⏎
+              AXStaticText|Toggle Fast mode
+              AXStaticText|Turn Fast mode on or off in the current composer
+                AXStaticText|Unassigned
+---
+                AXStaticText|⌘⏎
+              AXStaticText|Toggle Fast mode
+              AXStaticText|Turn Fast mode on or off in the current composer
+                AXStaticText|Unassigned
+              AXStaticText|Toggle plan mode
+---

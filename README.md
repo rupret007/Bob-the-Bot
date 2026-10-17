@@ -31,6 +31,13 @@ reproducible Bob overlay plus independent acceptance checks.
 Bob Ops Dashboard remains a separate portfolio control plane. It is not the Bob
 application runtime.
 
+## Snapshots in this repo
+
+These folders are pinned notes, not live runtime and not a CI result.
+
+- [skills/](skills/README.md) — Bob skill texts from about 2026-09-22. Conductor card is in that README.
+- [research/logic-companion-20260922/](research/logic-companion-20260922/README.md) — Logic companion research. No product code until Jeff accepts a slice.
+
 ## OpenClaw operator surface
 
 Bob keeps OpenClaw operator policy and optional CLI fallback docs under
