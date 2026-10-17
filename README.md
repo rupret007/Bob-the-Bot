@@ -17,3 +17,6 @@ Bob keeps OpenClaw operator policy and optional CLI fallback docs under
 [`docs/openclaw/`](docs/openclaw/), with native Cloud Agent tools as the
 default path. Local runtime/gateway state, `andrea_sync`, and BlueBubbles send
 engine internals remain outside Bob.
+
+A vendored fallback CLI lives at `tools/openclaw/cursor_openclaw.py`; operator
+guidance is in `docs/openclaw/operator-notes.md`.
