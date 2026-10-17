@@ -1,0 +1,6 @@
+- Echo risk: WebJam audio routed to BlackHole + room monitors while Logic records will re-capture the live playback unless BlackHole is the exclusive aggregate input (disable room output or set WebJam output to "BlackHole 2ch" only).
+- Mute via Mackie Record LED: map the Record-arm button on the desired channel (IAC Driver Bus 1) to send MUTE on/off via Mackie Control protocol, allowing silent toggling without grabbing the physical fader.
+- Phone transport PARKED: stop/pause the mobile WebJam source before record-arm so Bluetooth or WiFi audio ingest cannot bleed into the take; verify the host app's transport state shows idle, not playing or buffering.
+- Acceptance test: arm a Logic track fed by BlackHole, hit record for 30 seconds with WebJam muted, then unmute the Mackie-mapped channel via IAC and confirm no doubled audio, no feedback howl, and clean waveform on playback.
+- Pre-flight checklist: aggregate device shows BlackHole as input only; room output disabled or routed away from recording mics; phone parked; Mackie Record LED responds to IAC CC message and toggles mute state visibly in Logic's track header.
+- Rollback trigger: if echo, clipping, or doubled signal appears on first take, immediately stop, re-verify aggregate route, re-PARK phone, and retest mute mapping before another record pass.
