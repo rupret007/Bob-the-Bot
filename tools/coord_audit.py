@@ -27,7 +27,10 @@ REQUIRED_FIELDS = frozenset(
     }
 )
 ALLOWED_FIELDS = REQUIRED_FIELDS | {"branch", "pr", "hosted_status"}
-ALLOWED_AGENTS = frozenset({"none", "codex", "grok", "claude"})
+CONDUCTOR_AGENTS = frozenset({"codex", "claude", "gemini", "minimax", "grok"})
+ALLOWED_AGENTS = frozenset({"none"}) | CONDUCTOR_AGENTS
+WEBJAM_REPO = "rupret007/webjam"
+WEBJAM_REPO_KEY = WEBJAM_REPO.casefold()
 
 _FIELD_LINE = re.compile(r"^- ([a-z][a-z0-9_]*):(?: (.*))?$")
 _REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
@@ -117,6 +120,7 @@ def audit_snapshot(
 
     seen_numbers: set[int] = set()
     seen_repos: set[str] = set()
+    active_lease_repos: set[str] = set()
     for item in snapshot:
         if not isinstance(item, dict):
             errors.append({"issue": None, "code": "issue_not_object"})
@@ -145,6 +149,7 @@ def audit_snapshot(
             errors.append(_error(issue, f"missing_field:{field}"))
 
         repo = fields.get("repo", "")
+        repo_key: str | None = None
         if not _REPO.fullmatch(repo):
             errors.append(_error(issue, "invalid_repo"))
         else:
@@ -168,6 +173,7 @@ def audit_snapshot(
 
         agent = fields.get("agent", "")
         lease_text = fields.get("lease_until", "")
+        has_live_active_lease = False
         if agent not in ALLOWED_AGENTS:
             errors.append(_error(issue, "invalid_agent"))
         elif agent == "none":
@@ -183,8 +189,18 @@ def audit_snapshot(
             else:
                 if lease_until <= checked_at:
                     errors.append(_error(issue, "expired_active_lease"))
+                else:
+                    has_live_active_lease = True
                 if updated is not None and lease_until <= updated:
                     errors.append(_error(issue, "lease_not_after_update"))
+
+        if repo_key is not None and has_live_active_lease:
+            if repo_key in active_lease_repos:
+                errors.append(_error(issue, "dual_active_lease"))
+                if repo_key == WEBJAM_REPO_KEY:
+                    errors.append(_error(issue, "webjam_dual_active_lease"))
+            else:
+                active_lease_repos.add(repo_key)
 
     errors.sort(key=lambda item: (item["issue"] is None, item["issue"] or 0, item["code"]))
     return {
