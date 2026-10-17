@@ -35,7 +35,7 @@ Both inject files are pinned. This snapshot does not retire either one.
 - `bob-codex-queue-inject` includes Cmd+N when switching projects, so an in-flight Goal is not hijacked.
 - `bob-codex-queue-inject-2` spells the queued Steer control: the `→ Steer` row, not Stop, not the progress-row play control, and not idle Send.
 
-OCR coordinates and the Mini `machineId` inside those files are Sep 22 observations. Re-check the live machine before clicking from memory.
+OCR coordinates in the inject skill files are Sep 22 observations. Machine IDs are supplied locally at runtime and are never committed. Re-check the live machine before clicking from memory.
 
 ## Referenced, not copied here
 
