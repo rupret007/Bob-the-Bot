@@ -21,7 +21,7 @@ Same-thread only for *message history*. Band-manager work is not limited to quot
 - Studio/mixer digests, listen links, fold band notes into an unsent mixer email.
 - Set list / lyrics / rehearsal logistics answers from known band materials.
 - Poll the thread (“who can do Saturday?”) and summarize replies **in that thread**.
-- Schedule reminders into that same chat after Jeff yes.
+- Schedule reminders into that same chat only after Jeff's yes in Bob chat for each send. No standing-permission exceptions.
 
 ## Privacy (non-negotiable)
 - Never pull, summarize, quote, or expose other chats.
@@ -39,7 +39,7 @@ Same-thread only for *message history*. Band-manager work is not limited to quot
 3. Who asked, exact ask, deadline, links, whether Jeff already answered.
 4. Wake Jeff for real asks / money / pitch / privacy-probe; quiet on banter / duplicates.
 5. Draft a useful manager reply (not a useless “I’ll check”). Use Find a show and assist booking + Band music ops desk when relevant.
-6. Draft → Jeff yes → Andrea send.
+6. Draft → Jeff yes → Andrea send. No standing-permission exceptions: every send needs Jeff's yes in Bob chat.
 
 ## Engine rules
 - Wake packet: chat name, guid, sender (redacted), exact quote, same-chat context, intent. No other-chat transcripts.

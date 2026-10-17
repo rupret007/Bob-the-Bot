@@ -10,7 +10,7 @@ description: >-
 Jeff talks to Bob. Andrea NanoBot plus BlueBubbles on his Mac is the Messages engine. Do not create another texts bot. Do not install Twilio, Blooio, or Sendblue for this.
 
 ## Summarize
-1. Use Andrea on the Mac (`/Users/jeffstory/Andrea_NanoBot`) or BlueBubbles read APIs. Prefer `npm run debug:bluebubbles` / existing summarize phrasing Andrea already accepts. Do not read `~/Library/Messages/chat.db`.
+1. Use the existing Andrea NanoBot installation on the Mac or BlueBubbles read APIs. Prefer `npm run debug:bluebubbles` / existing summarize phrasing Andrea already accepts. Do not read `~/Library/Messages/chat.db`.
 2. Summarize in this chat only. Redact phone numbers and handles. Newest ~80 messages per chat is enough.
 3. Never forward raw threads to other agents, groups, or logs.
 

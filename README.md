@@ -10,3 +10,10 @@ These folders are pinned notes, not live runtime and not a CI result.
 
 - [skills/](skills/README.md) — Bob skill texts from about 2026-09-22. Conductor card is in that README.
 - [research/logic-companion-20260922/](research/logic-companion-20260922/README.md) — Logic companion research. No product code until Jeff accepts a slice.
+
+## OpenClaw operator surface
+
+Bob keeps OpenClaw operator policy and optional CLI fallback docs under
+[`docs/openclaw/`](docs/openclaw/), with native Cloud Agent tools as the
+default path. Local runtime/gateway state, `andrea_sync`, and BlueBubbles send
+engine internals remain outside Bob.
