@@ -11,6 +11,7 @@ import argparse
 import base64
 import json
 import os
+import ssl
 import subprocess
 import sys
 import time
@@ -30,6 +31,22 @@ import env_loader  # noqa: E402
 
 VERSION = "1.0.0"
 CURSOR_API_BASE_URL = "https://api.cursor.com"
+# Use OpenSSL's compiled-in paths, never the environment-resolved cafile/capath.
+_SYSTEM_VERIFY_PATHS = ssl.get_default_verify_paths()
+_SYSTEM_CA_FILE = _SYSTEM_VERIFY_PATHS.openssl_cafile
+_SYSTEM_CA_DIR = _SYSTEM_VERIFY_PATHS.openssl_capath
+
+
+def _tls_context() -> ssl.SSLContext:
+    # create_default_context/load_default_certs consult SSLKEYLOGFILE and/or
+    # SSL_CERT_*; construct the verified client context explicitly instead.
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    cafile = _SYSTEM_CA_FILE if _SYSTEM_CA_FILE and os.path.isfile(_SYSTEM_CA_FILE) else None
+    capath = _SYSTEM_CA_DIR if _SYSTEM_CA_DIR and os.path.isdir(_SYSTEM_CA_DIR) else None
+    if cafile is None and capath is None:
+        raise RuntimeError("System TLS certificate paths are unavailable.")
+    context.load_verify_locations(cafile=cafile, capath=capath)
+    return context
 
 
 def _load_repo_dotenv() -> None:
@@ -81,7 +98,11 @@ class CursorApiClient:
     def __init__(self, cfg: Config) -> None:
         self.cfg = cfg
         self.base_url = normalize_base_url(cfg.base_url)
-        self.opener = urllib.request.build_opener(_NoRedirectHandler())
+        self.opener = urllib.request.build_opener(
+            urllib.request.ProxyHandler({}),
+            urllib.request.HTTPSHandler(context=_tls_context()),
+            _NoRedirectHandler(),
+        )
 
     def _auth_headers(self, mode: str) -> dict[str, str]:
         if mode == "bearer":
@@ -282,7 +303,7 @@ def parse_args() -> argparse.Namespace:
     p_delete.add_argument("--yes", action="store_true", help="Confirm deleting the agent")
 
     p_diag = sub.add_parser("diagnose")
-    p_diag.add_argument("--show-key", action="store_true")
+    p_diag.add_argument("--show-key", action="store_true", help="Report key presence and length only")
     return parser.parse_args()
 
 
@@ -373,7 +394,7 @@ def handle(cfg: Config, args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             "timeout_seconds": cfg.timeout_seconds,
             "retries": cfg.retries,
             "api_key_present": bool(cfg.api_key),
-            "api_key_preview": (f"{cfg.api_key[:2]}***{cfg.api_key[-2:]}" if args.show_key and len(cfg.api_key) > 8 else "***"),
+            "api_key_preview": (f"set (length {len(cfg.api_key)})" if cfg.api_key else "not set"),
             "policy": {
                 "native_cloud_agents_preferred": True,
                 "cli_fallback_only": True,

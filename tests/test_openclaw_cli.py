@@ -116,16 +116,16 @@ class OpenClawSafetyTests(unittest.TestCase):
             script_dir.mkdir(parents=True)
             cwd = Path(temporary) / "unrelated"
             cwd.mkdir()
-            (root / ".env").write_text("REPO_ONLY=loaded\nEXISTING=repo\n", encoding="utf-8")
-            (cwd / ".env").write_text("CWD_ONLY=unsafe\nEXISTING=cwd\n", encoding="utf-8")
+            (root / ".env").write_text("CURSOR_AUTH_MODE=bearer\nCURSOR_API_KEY=repo\n", encoding="utf-8")
+            (cwd / ".env").write_text("CWD_ONLY=unsafe\nCURSOR_AUTH_MODE=basic\nCURSOR_API_KEY=cwd\n", encoding="utf-8")
             with (
                 mock.patch.object(cursor_openclaw, "_SCRIPT_DIR", script_dir),
                 mock.patch.object(Path, "cwd", return_value=cwd),
-                mock.patch.dict(os.environ, {"EXISTING": "process"}, clear=True),
+                mock.patch.dict(os.environ, {"CURSOR_API_KEY": "process"}, clear=True),
             ):
                 cursor_openclaw._load_repo_dotenv()
-                self.assertEqual(os.environ["REPO_ONLY"], "loaded")
-                self.assertEqual(os.environ["EXISTING"], "process")
+                self.assertEqual(os.environ["CURSOR_AUTH_MODE"], "bearer")
+                self.assertEqual(os.environ["CURSOR_API_KEY"], "process")
                 self.assertNotIn("CWD_ONLY", os.environ)
 
     def test_missing_repository_dotenv_does_not_fall_back_to_cwd(self) -> None:

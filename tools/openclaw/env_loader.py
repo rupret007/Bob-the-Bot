@@ -1,4 +1,4 @@
-"""Load local .env files into os.environ (stdlib only)."""
+"""Load only Cursor credentials from regular local .env files (stdlib only)."""
 
 from __future__ import annotations
 
@@ -6,10 +6,12 @@ import json
 import os
 import re
 import shlex
+import stat
 from pathlib import Path
 from typing import Iterable
 
 KEY_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+ALLOWED_KEYS = frozenset({"CURSOR_API_KEY", "CURSOR_AUTH_MODE"})
 
 
 def parse_env_line(line: str) -> tuple[str, str] | None:
@@ -52,22 +54,25 @@ def _parse_value(raw_val: str) -> str | None:
 def merge_dotenv_paths(paths: Iterable[Path], *, override: bool = False) -> list[Path]:
     loaded: list[Path] = []
     for path in paths:
-        resolved = path.expanduser()
-        try:
-            resolved = resolved.resolve()
-        except OSError:
-            continue
-        if not resolved.is_file():
-            continue
-        if _merge_file(resolved, override=override):
-            loaded.append(resolved)
+        # Do not resolve symlinks before checking the file itself.
+        candidate = path.expanduser().absolute()
+        if _merge_file(candidate, override=override):
+            loaded.append(candidate)
     return loaded
 
 
 def _merge_file(path: Path, *, override: bool) -> bool:
     try:
-        text = path.read_text(encoding="utf-8")
-    except OSError:
+        before = path.lstat()
+        if not stat.S_ISREG(before.st_mode):
+            return False
+        flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+        with os.fdopen(os.open(path, flags), encoding="utf-8") as stream:
+            opened = os.fstat(stream.fileno())
+            if not stat.S_ISREG(opened.st_mode) or not os.path.samestat(before, opened):
+                return False
+            text = stream.read()
+    except (OSError, UnicodeError):
         return False
     touched = False
     for line in text.splitlines():
@@ -75,6 +80,8 @@ def _merge_file(path: Path, *, override: bool) -> bool:
         if not pair:
             continue
         key, value = pair
+        if key not in ALLOWED_KEYS:
+            continue
         if not override and key in os.environ:
             continue
         os.environ[key] = value
