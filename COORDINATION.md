@@ -96,6 +96,8 @@ the current live-board receipt.
 
 Jeff still owns feel, send, spend, live Cisco, Che pull, Logic keys/WAVs, and merge when not leftover-green. Karen remains leftover + security ship-gate. Andrea send fence is unchanged.
 
+The contract workflow schedules only when this file, the coord issue template, the workflow file, `tools/`, or `tests/` change. A skills or Logic docs commit does not schedule it.
+
 ## OpenClaw consolidation fences
 
 - Consolidation default: implement with native Cloud Agents first.
