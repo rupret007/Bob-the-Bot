@@ -7,6 +7,9 @@ This folder vendors a cleaned copy of `scripts/cursor_openclaw.py` for Bob.
 - **Preferred path:** use native Cursor Cloud Agent tools first.
 - **Fallback path:** use this CLI only when native tools are unavailable or blocked.
 - **Dry-run support:** `create-agent` and `followup` support `--dry-run` and do not POST in dry-run mode.
+- **Confirmation:** live `create-agent`, `followup`, `stop-agent`, `stop-all-jobs`, and `delete-agent` operations require `--yes`. `stop-all-jobs` previews matches without `--yes`; explicit `--dry-run` always prevents changes.
+- **Configuration:** only the repository-root `.env` is loaded; existing environment variables take precedence. A `.env` in the current working directory is ignored unless it is the repository root.
+- **API destination:** `CURSOR_BASE_URL` and `--base-url` accept only `https://api.cursor.com` (an optional trailing slash is allowed). HTTP, other origins, URL credentials, ports, paths, queries, and fragments are rejected. Redirects are refused before credentials can be forwarded.
 
 ## Explicit exclusions
 

@@ -29,11 +29,12 @@ import cursor_api_common  # noqa: E402
 import env_loader  # noqa: E402
 
 VERSION = "1.0.0"
+CURSOR_API_BASE_URL = "https://api.cursor.com"
 
 
 def _load_repo_dotenv() -> None:
     repo_root = _SCRIPT_DIR.parent.parent
-    env_loader.merge_dotenv_paths([repo_root / ".env", Path.cwd() / ".env"], override=False)
+    env_loader.merge_dotenv_paths([repo_root / ".env"], override=False)
 
 
 def parse_bool(value: str) -> bool:
@@ -46,13 +47,15 @@ def parse_bool(value: str) -> bool:
 
 
 def normalize_base_url(raw: str | None) -> str:
-    base = (raw or "https://api.cursor.com").strip()
+    base = (raw or CURSOR_API_BASE_URL).strip()
     if not base:
-        base = "https://api.cursor.com"
+        base = CURSOR_API_BASE_URL
     lowered = base.lower()
     if not lowered.startswith(("http://", "https://")):
         raise ValueError("Base URL must start with http:// or https://.")
-    return base.rstrip("/")
+    if base not in {CURSOR_API_BASE_URL, CURSOR_API_BASE_URL + "/"}:
+        raise ValueError(f"Base URL must be {CURSOR_API_BASE_URL}; other endpoints are not allowed.")
+    return CURSOR_API_BASE_URL
 
 
 @dataclass
@@ -66,9 +69,19 @@ class Config:
     output_json: bool
 
 
+class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def http_error_302(self, req, fp, code, msg, headers):
+        fp.close()
+        raise ValueError("API redirects are not allowed.")
+
+    http_error_301 = http_error_303 = http_error_307 = http_error_308 = http_error_302
+
+
 class CursorApiClient:
     def __init__(self, cfg: Config) -> None:
         self.cfg = cfg
+        self.base_url = normalize_base_url(cfg.base_url)
+        self.opener = urllib.request.build_opener(_NoRedirectHandler())
 
     def _auth_headers(self, mode: str) -> dict[str, str]:
         if mode == "bearer":
@@ -86,7 +99,7 @@ class CursorApiClient:
         body: dict[str, Any] | None,
         mode: str,
     ) -> tuple[int, dict[str, Any], str]:
-        url = f"{self.cfg.base_url}{path}"
+        url = f"{self.base_url}{path}"
         if query:
             url += "?" + urllib.parse.urlencode(query)
         payload: bytes | None = None
@@ -101,7 +114,7 @@ class CursorApiClient:
 
         req = urllib.request.Request(url=url, data=payload, method=method, headers=headers)
         try:
-            with urllib.request.urlopen(req, timeout=self.cfg.timeout_seconds) as resp:
+            with self.opener.open(req, timeout=self.cfg.timeout_seconds) as resp:
                 raw = resp.read().decode("utf-8", errors="replace")
                 data = cursor_api_common.parse_json_response_body(raw)
                 return resp.status, data, raw
@@ -186,7 +199,11 @@ def build_create_payload(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def add_common_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--base-url", default=os.getenv("CURSOR_BASE_URL", "https://api.cursor.com"))
+    parser.add_argument(
+        "--base-url",
+        default=os.getenv("CURSOR_BASE_URL", CURSOR_API_BASE_URL),
+        help=f"API origin (only {CURSOR_API_BASE_URL} is allowed)",
+    )
     parser.add_argument("--auth-mode", choices=["auto", "basic", "bearer"], default=os.getenv("CURSOR_AUTH_MODE", "auto"))
     parser.add_argument("--timeout-seconds", type=int, default=30)
     parser.add_argument("--retries", type=int, default=2)
@@ -240,14 +257,17 @@ def parse_args() -> argparse.Namespace:
     p_create.add_argument("--open-as-cursor-github-app", type=parse_bool, default=False)
     p_create.add_argument("--skip-reviewer-request", type=parse_bool, default=False)
     p_create.add_argument("--dry-run", action="store_true")
+    p_create.add_argument("--yes", action="store_true", help="Confirm creation of the agent")
 
     p_follow = sub.add_parser("followup")
     p_follow.add_argument("--id", required=True)
     p_follow.add_argument("--prompt", required=True)
     p_follow.add_argument("--dry-run", action="store_true")
+    p_follow.add_argument("--yes", action="store_true", help="Confirm sending the followup")
 
     p_stop = sub.add_parser("stop-agent")
     p_stop.add_argument("--id", required=True)
+    p_stop.add_argument("--yes", action="store_true", help="Confirm stopping the agent")
 
     p_stop_all = sub.add_parser("stop-all-jobs")
     p_stop_all.add_argument("--repo", default=".")
@@ -259,6 +279,7 @@ def parse_args() -> argparse.Namespace:
 
     p_delete = sub.add_parser("delete-agent")
     p_delete.add_argument("--id", required=True)
+    p_delete.add_argument("--yes", action="store_true", help="Confirm deleting the agent")
 
     p_diag = sub.add_parser("diagnose")
     p_diag.add_argument("--show-key", action="store_true")
@@ -333,6 +354,11 @@ def _agent_source_repository(agent: dict[str, Any]) -> str:
     source = agent.get("source") if isinstance(agent.get("source"), dict) else {}
     repo = source.get("repository")
     return _normalize_github_remote(str(repo or ""))
+
+
+def require_confirmation(args: argparse.Namespace) -> None:
+    if not getattr(args, "yes", False):
+        raise ValueError(f"{args.command} requires --yes to execute.")
 
 
 def handle(cfg: Config, args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
@@ -410,6 +436,7 @@ def handle(cfg: Config, args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         payload = build_create_payload(args)
         if args.dry_run:
             return 0, {"status": 0, "dry_run": True, "would_send": False, "payload": payload}
+        require_confirmation(args)
         status, data, raw, auth_mode = client.request("POST", "/v0/agents", body=payload)
         return status, {"status": status, "auth_mode": auth_mode, "response": data or raw}
 
@@ -424,11 +451,13 @@ def handle(cfg: Config, args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                 "agent_id": args.id,
                 "payload": body,
             }
+        require_confirmation(args)
         status, data, raw, auth_mode = client.request("POST", f"/v0/agents/{args.id}/followup", body=body)
         return status, {"status": status, "auth_mode": auth_mode, "response": data or raw}
 
     if args.command == "stop-agent":
         cursor_api_common.validate_agent_id(args.id)
+        require_confirmation(args)
         status, data, raw, auth_mode = client.request("POST", f"/v0/agents/{args.id}/stop")
         return status, {"status": status, "auth_mode": auth_mode, "response": data or raw}
 
@@ -456,6 +485,7 @@ def handle(cfg: Config, args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         dry_run = bool(args.dry_run) or not bool(args.yes)
         results: list[dict[str, Any]] = []
         if not dry_run and scan_complete:
+            require_confirmation(args)
             for ag in to_stop:
                 agent_id = str(ag.get("id") or "").strip()
                 if not agent_id:
@@ -488,6 +518,7 @@ def handle(cfg: Config, args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
 
     if args.command == "delete-agent":
         cursor_api_common.validate_agent_id(args.id)
+        require_confirmation(args)
         status, data, raw, auth_mode = client.request("DELETE", f"/v0/agents/{args.id}")
         return status, {"status": status, "auth_mode": auth_mode, "response": data or raw}
 
