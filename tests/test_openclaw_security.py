@@ -93,12 +93,22 @@ class DotenvSecurityTests(unittest.TestCase):
                     self.subTest(dangling=dangling),
                     mock.patch.object(cli, "_SCRIPT_DIR", script_dir),
                     mock.patch.dict(os.environ, {}, clear=True),
-                    mock.patch.object(cli.env_loader.os, "open") as open_file,
+                    mock.patch.object(
+                        cli.env_loader.os, "open",
+                        side_effect=AssertionError("lstat must refuse symlinks before os.open"),
+                    ) as open_file,
                 ):
+                    self.assertFalse(cli.env_loader._merge_file(dotenv, override=False))
                     cli._load_repo_dotenv()
                     self.assertEqual(dict(os.environ), {})
                     open_file.assert_not_called()
-            with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(cli.env_loader.os, "open") as open_file:
+            with (
+                mock.patch.dict(os.environ, {}, clear=True),
+                mock.patch.object(
+                    cli.env_loader.os, "open",
+                    side_effect=AssertionError("lstat must refuse symlinks before os.open"),
+                ) as open_file,
+            ):
                 self.assertEqual(cli.env_loader.merge_dotenv_paths([dotenv]), [])
                 self.assertEqual(dict(os.environ), {})
                 open_file.assert_not_called()
@@ -127,6 +137,35 @@ class DotenvSecurityTests(unittest.TestCase):
                 self.assertNotIn("CURSOR_AUTH_MODE", os.environ)
             self.assertEqual(len(open_calls), 1)
 
+    def test_dotenv_replaced_by_regular_file_during_open_is_refused(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            dotenv = Path(tmp) / ".env"
+            replacement = Path(tmp) / "replacement"
+            dotenv.write_text("CURSOR_API_KEY=initial\n", encoding="utf-8")
+            replacement.write_text(
+                "CURSOR_API_KEY=outside\nCURSOR_AUTH_MODE=bearer\n", encoding="utf-8",
+            )
+            before = dotenv.lstat()
+            self.assertTrue(stat.S_ISREG(before.st_mode))
+            self.assertTrue(stat.S_ISREG(replacement.lstat().st_mode))
+            self.assertFalse(os.path.samestat(before, replacement.lstat()))
+            real_open = os.open
+
+            def replace_then_open(path, flags):
+                self.assertEqual(path, dotenv)
+                # Rename a separately created file so its inode cannot be reused.
+                replacement.replace(dotenv)
+                return real_open(path, flags)
+
+            with (
+                mock.patch.dict(os.environ, {}, clear=True),
+                mock.patch.object(cli.env_loader.os, "open", side_effect=replace_then_open) as open_file,
+            ):
+                self.assertEqual(cli.env_loader.merge_dotenv_paths([dotenv]), [])
+                self.assertEqual(dict(os.environ), {})
+                open_file.assert_called_once()
+            self.assertFalse(os.path.samestat(before, dotenv.lstat()))
+
     def test_git_ignores_root_and_nested_dotenv(self) -> None:
         repo = Path(__file__).resolve().parents[1]
         gitignore = (repo / ".gitignore").read_text(encoding="utf-8").splitlines()
@@ -137,6 +176,10 @@ class DotenvSecurityTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stderr, "")
+        for line in result.stdout.splitlines():
+            match, _ = line.split("\t", 1)
+            pattern = match.split(":", 2)[2]
+            self.assertFalse(pattern.startswith("!"), f"Negated ignore match: {line}")
         ignored_paths = [line.split("\t", 2)[-1] for line in result.stdout.splitlines()]
         self.assertEqual(ignored_paths, [".env", "tools/openclaw/.env"])
 
