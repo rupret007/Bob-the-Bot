@@ -132,6 +132,7 @@ test('CI is read-only, pinned, offline at test time, and deployment-free', () =>
     workflow,
     /ref: f8655e2da59d1db8bd3777758ae8220ecb65d847/u,
   );
+  assert.match(workflow, /TZ: America\/Chicago/u);
   assert.match(workflow, /OPENAI_API_ENABLED: 0/u);
   assert.match(workflow, /RUN_COMM_SMOKE: 0/u);
   assert.doesNotMatch(workflow, /workflow_dispatch|secrets\.|contents: write/u);

@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 25
     env:
       CI: true
+      TZ: America/Chicago
       ASSISTANT_NAME: Bob
       TELEGRAM_NATURAL_UX: true
       OPENAI_API_ENABLED: 0
